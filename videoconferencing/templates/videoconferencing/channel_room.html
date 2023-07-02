@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}">
+    <title>Chnnel Room</title>
+</head>
+
+<body>
+    <h1 id="channel-name">{{channel_name}}</h1>
+
+    <div>
+        <video id="localuser" autoplay playsinline></video>
+    </div>
+
+    <div>
+        <video id="remoteuser" autoplay playsinline></video>
+    </div>
+
+    <div>
+        <video id="screen-share" controls="true" autoplay playinline></video>
+    </div>
+    
+    <div>
+        <button type="button" id="screen-share-button">screen share</button>
+    </div>
+
+</body>
+<script type="text/javascript" src="{% static 'videoconferencing/js/agora-rtm-sdk-1.5.1.js' %}"></script>
+<script type="text/javascript" src="{% static 'videoconferencing/js/main.js' %}"></script>
+</html>

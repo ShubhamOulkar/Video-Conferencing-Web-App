@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
@@ -7,9 +8,14 @@
     <title>Channel name</title>
     <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}">
 </head>
+
 <body>
-    <h1>Channel name</h1>
-    <div></div>
+    <h1>Create Channel</h1>
+
+    <input type="text" name="channel-name" id="channel-name" required autofocus>
+    <input type="submit" id="join-btn" value="join channel">
+
 </body>
-<script type="text/javascript" src="{% static 'videoconferencing/js/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'videoconferencing/js/channel.js' %}"></script>
+
 </html>
