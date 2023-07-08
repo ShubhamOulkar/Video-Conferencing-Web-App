@@ -2,6 +2,8 @@ let streams = {
     localStream : null,
     remoteStream : null,
     screenSharingStream : null,
+    remoteUser: null,
+    localUser: null,
 };
 
 export const setLocalStrem = (stream) => {
@@ -25,6 +27,20 @@ export const setRemoteStream = (stream)=>{
     };
 };
 
+
+export const setLocalUser = (uid) => {
+    streams = {
+        ...streams,
+        localUser: uid,
+    };
+};
+
+export const setRemoteUser = (uid) => {
+    streams = {
+        ...streams,
+        remoteUser: uid,
+    };
+};
 
 export const getState = ()=>{
     return streams
