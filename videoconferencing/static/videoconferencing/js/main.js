@@ -1,10 +1,8 @@
-let client;
-let channel;
-let localMedia;
-let remoteMedia;
-let screenMedia;
+import * as store from './store_stream.js';
+
 let userconnection;
 let signaling_connection;
+
 
 const server = {
     iceServer: [{
@@ -12,65 +10,58 @@ const server = {
     }]
 }
 
-let stratApp = async () => {
-    const channel_name = document.querySelector('#channel-name').innerHTML;
+const channel_name = document.querySelector('#channel-name').innerHTML;
+    
+signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/channel_room/' + channel_name + '/')
 
-    signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/channel_room/' + channel_name + '/')
+const getLocalMedia = async ()=>{
+    await navigator.mediaDevices.getUserMedia({'audio':false, 'video':true})
+    .then(localMedia => {
+        store.setLocalStrem(localMedia);
+        const localUser = document.querySelector('#localuser');
+        localUser.srcObject = localMedia;
+        console.log('local media devices got connected:',localMedia)
+    }).catch(err => {
+        console.log('accessing local media devices error: ', err);
+    }); 
+    createUserConnection(); 
+};
 
-    signaling_connection.onmessage =  (e) => {
-        const data = JSON.parse(e.data);
-        console.log('sdp received :', data.message) 
+getLocalMedia();
+
+const createUserConnection = ()=>{
+    userconnection = new RTCPeerConnection(server);
+    console.log('RTC userconnection established.')
+
+    userconnection.onicecandidate = (event)=>{
+        if(event.candidate){
+            // send ice candidate
+            console.log('icecandidate send')
+        };
     };
 
-    signaling_connection.onclose = async (e) => {
-        console.error('Chat socket closed unexpectedly');
+    userconnection.onconnectionstatechange = (event)=>{
+        if(userconnection.connectionState === 'connected'){
+            console.log('succesfully connected to remote user.')
+        };
     };
 
-    localMedia = await navigator.mediaDevices.getUserMedia({ 'video': true, 'audio': true, });
-
-    document.querySelector('#screen-share-button').addEventListener('click', async (e) => {
-        e.preventDefault
-        screenMedia = await navigator.mediaDevices.getDisplayMedia({ 'video': true, 'audio': false, });
-        document.querySelector('#screen-share').style.display = 'block';
-        document.querySelector('#screen-share').srcObject = screenMedia
-    })
-
-    document.querySelector('#localuser').srcObject = localMedia
-
-    createOffer()
-}
-
-let createOffer = async () => {
-    userconnection = new RTCPeerConnection(server)
-
-    remoteMedia = new MediaStream()
-    document.querySelector('#remoteuser').srcObject = remoteMedia
-
+    // add receiving tracks from remote user
+    const remoteMedia = new MediaStream();
+    const remoteUser = document.querySelector('#remoteuser');
+    remoteUser.srcObject = remoteMedia;
+    store.setRemoteStream(remoteMedia);
+    userconnection.ontrack = (event)=>{
+        remoteMedia.addTrack(event.track);
+        console.log('remote tracks added to RTC connection:',remoteMedia);
+    };
+    
+    // add local media 
+    const localMedia = store.getState().localStream;
+    
     localMedia.getTracks().forEach((track) => {
-        userconnection.addTrack(track, localMedia)
-    })
+        userconnection.addTrack(track, localMedia);
+        console.log('local tracks added to RTC connection:',localMedia);
+    });
+};
 
-    userconnection.ontrack = (event) => {
-        event.streams[0].getTracks().forEach((track) => {
-            remoteMedia.addTrack(track)
-        })
-    }
-
-    userconnection.onicecandidate = (event) => {
-        if (event.candidate) {
-            // console.log("ICE", event.candidate)
-        }
-    }
-
-    userconnection.createOffer()
-    .then((offer)=>{
-        userconnection.setLocalDescription(offer)
-        signaling_connection.send(JSON.stringify({'type':'offer','message':offer}))
-        console.log('sdp send:', offer)
-    })
-    .catch((error)=>{
-        console.log('error:',error)
-    })
-}
-
-stratApp()

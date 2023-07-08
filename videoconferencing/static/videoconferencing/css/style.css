@@ -5,8 +5,9 @@ h1{
 #screen-share, #localuser, #remoteuser{
     height: 400px;
     width: 400px;
+    background-color: black;
 }
 
-#screen-share, #remoteuser{
+#screen-share{
     display: none;
 }
