@@ -13,6 +13,7 @@ const server = {
 const channel_name = document.querySelector('#channel-name').innerHTML;
 
 const getLocalMedia = async ()=>{
+
     await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
     .then(localMedia => {
         store.setLocalStrem(localMedia);
@@ -21,7 +22,14 @@ const getLocalMedia = async ()=>{
         console.log('local media devices got connected:',localMedia)
     }).catch(err => {
         console.log('accessing local media devices error: ', err);
-    }); 
+    });
+
+    const screenSharingButton = document.getElementById('screen_sharing_button');
+    
+    screenSharingButton.addEventListener('click', async ()=>{
+        const screenSharingActive = store.getState().screenSharingActive;
+        switchBetweenCameraAndScreenSharing(screenSharingActive);
+    });
 
     signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/channel_room/' + channel_name + '/')
 
@@ -32,7 +40,6 @@ const getLocalMedia = async ()=>{
     signaling_connection.addEventListener('message', handleMessage);
 };
 
-getLocalMedia();
 
 const createUserConnection = ()=>{
     userconnection = new RTCPeerConnection(server);
@@ -65,13 +72,12 @@ const createUserConnection = ()=>{
         console.log('remote tracks added to RTC connection:',remoteMedia);
     };
     
-    // add local media 
+    // add local media
     const localMedia = store.getState().localStream;
-    
     localMedia.getTracks().forEach((track) => {
         userconnection.addTrack(track, localMedia);
-        console.log('local tracks added to RTC connection:',localMedia);
-    });
+        console.log('local tracks added to RTC connection:',localMedia.getVideoTracks()[0]);
+    });  
 };
 
 const handleMessage = (event)=>{
@@ -159,3 +165,58 @@ const addCandidate = async (candidate)=>{
         console.log('error occured while ice candidate:',error);
     }
 };
+
+let screenSharingStream;
+
+const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
+    if(screenSharingActive){
+
+        const localStream = store.getState().localStream;
+
+        // stop screen sharing
+        store
+        .getState()
+        .localStream
+        .getTracks()
+        .forEach((track)=>{
+            track.stop();
+        });
+
+        await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
+        .then(localMedia => {
+            store.setLocalStrem(localMedia);
+            const localUser = document.querySelector('#localuser');
+            localUser.srcObject = localMedia;
+            console.log('local media devices got connected:',localMedia)
+            const localiIdeo = document.querySelector('#localuser');
+            localVideo.srcObject = localMedia;
+        }).catch(err => {
+            console.log('accessing local media devices error: ', err);
+        });
+
+        const localuser = store.getState().localUser;
+        localuser.addEventListener('negotiationneeded', sendUserOffer());
+
+        store.setScreenSharingActive(!screenSharingActive);
+
+    }else {
+        console.log('switching to screen sharing');
+        try {
+            screenSharingStream = await navigator.mediaDevices.getDisplayMedia({'audio':true, 'video':true});
+            store.setLocalStrem(screenSharingStream);
+            console.log(screenSharingStream.getVideoTracks()[0])
+            
+            const localuser = store.getState().localUser;
+            localuser.addEventListener('negotiationneeded', sendUserOffer());
+
+
+            store.setScreenSharingActive(!screenSharingActive);
+            const localUser = document.querySelector('#localuser');
+            localUser.srcObject = screenSharingStream;
+        }catch (error) {
+            console.log('error in screen sharing:',error)
+        }
+    }
+};
+
+getLocalMedia();

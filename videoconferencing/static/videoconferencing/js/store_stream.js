@@ -4,12 +4,21 @@ let streams = {
     screenSharingStream : null,
     remoteUser: null,
     localUser: null,
+    screenSharingActive : false,
 };
+
 
 export const setLocalStrem = (stream) => {
     streams = {
         ...streams,
         localStream: stream,
+    };
+};
+
+export const setScreenSharingActive = (state)=>{
+    streams = {
+        ...streams,
+        screenSharingActive : state,
     };
 };
 
@@ -41,6 +50,7 @@ export const setRemoteUser = (uid) => {
         remoteUser: uid,
     };
 };
+
 
 export const getState = ()=>{
     return streams
