@@ -3,9 +3,14 @@
 
 <head>
     {% load static %}
+    {% load compress %}
+
+    {% compress css %}
+        <link rel="stylesheet" type="text/x-scss"  href="{% static 'videoconferencing/scss/style.scss'%}" />
+    {% endcompress %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}">
+    <!-- <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}"> -->
     <title>Channel Room</title>
 </head>
 

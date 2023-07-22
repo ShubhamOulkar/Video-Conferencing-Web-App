@@ -1,0 +1,26 @@
+/* line 5, videoconferencing/static/videoconferencing/scss/_base.scss */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; }
+
+/* line 13, videoconferencing/static/videoconferencing/scss/_base.scss */
+html {
+  box-sizing: border-box;
+  font-size: 62.5%; }
+
+/* line 18, videoconferencing/static/videoconferencing/scss/_base.scss */
+body {
+  font-family: "Nunito", sans-serif;
+  color: #6D5D4B;
+  font-weight: 300;
+  line-height: 1.6;
+  background-color: #f9f7f6; }
+
+/* line 26, videoconferencing/static/videoconferencing/scss/_base.scss */
+.container {
+  background-color: aliceblue;
+  display: grid;
+  grid-template-rows: 80vh repeat(4, min-content); }

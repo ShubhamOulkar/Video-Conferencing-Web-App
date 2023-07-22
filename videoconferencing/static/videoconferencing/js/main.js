@@ -27,8 +27,9 @@ const getLocalMedia = async ()=>{
     const screenSharingButton = document.getElementById('screen_sharing_button');
     
     screenSharingButton.addEventListener('click', async ()=>{
-        const screenSharingActive = store.getState().screenSharingActive;
-        switchBetweenCameraAndScreenSharing(screenSharingActive);
+        const screenActive = store.getState().screenSharingActive;
+        switchBetweenCameraAndScreenSharing(screenActive);
+        console.log('screenActive:', screenActive);
     });
 
     signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/channel_room/' + channel_name + '/')
@@ -188,7 +189,7 @@ const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
             const localUser = document.querySelector('#localuser');
             localUser.srcObject = localMedia;
             console.log('local media devices got connected:',localMedia)
-            const localiIdeo = document.querySelector('#localuser');
+            const localVideo = document.querySelector('#localuser');
             localVideo.srcObject = localMedia;
         }).catch(err => {
             console.log('accessing local media devices error: ', err);
@@ -210,9 +211,10 @@ const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
             localuser.addEventListener('negotiationneeded', sendUserOffer());
 
 
-            store.setScreenSharingActive(!screenSharingActive);
             const localUser = document.querySelector('#localuser');
             localUser.srcObject = screenSharingStream;
+            console.log('screenSharingActive:',screenSharingActive)
+            store.setScreenSharingActive(!screenSharingActive);
         }catch (error) {
             console.log('error in screen sharing:',error)
         }

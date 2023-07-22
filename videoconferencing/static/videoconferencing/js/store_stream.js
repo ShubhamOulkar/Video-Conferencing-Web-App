@@ -44,6 +44,13 @@ export const setRemoteUser = (uid) => {
     };
 };
 
+export const setScreenSharingActive = (screenSharingActive) => {
+    streams = {
+        ...streams,
+        screenSharingActive: screenSharingActive,
+    };
+};
+
 
 export const getState = ()=>{
     return streams

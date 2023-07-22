@@ -3,10 +3,15 @@
 
 <head>
     {% load static %}
+    {% load compress %}
+
+    {% compress css %}
+        <link rel="stylesheet" type="text/x-scss"  href="{% static 'videoconferencing/scss/main.scss'%}" />
+    {% endcompress %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Channel name</title>
-    <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}">
+    <!-- <link rel="stylesheet" href="{% static 'videoconferencing/css/style.css'%}"> -->
 </head>
 
 <body>

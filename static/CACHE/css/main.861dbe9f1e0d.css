@@ -1,0 +1,51 @@
+/* line 5, videoconferencing/static/videoconferencing/scss/_base.scss */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit; }
+
+/* line 13, videoconferencing/static/videoconferencing/scss/_base.scss */
+html {
+  box-sizing: border-box;
+  font-size: 62.5%; }
+
+/* line 18, videoconferencing/static/videoconferencing/scss/_base.scss */
+body {
+  font-family: "Nunito", sans-serif;
+  color: #6D5D4B;
+  font-weight: 300;
+  line-height: 1.6;
+  background-color: #f9f7f6; }
+
+/* line 26, videoconferencing/static/videoconferencing/scss/_base.scss */
+.container {
+  background-color: aliceblue;
+  display: grid;
+  grid-template-rows: 80vh repeat(4, minmax(30rem, min-content)); }
+
+/* line 3, videoconferencing/static/videoconferencing/scss/_header.scss */
+.header__bg-video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  z-index: -1; }
+
+/* line 13, videoconferencing/static/videoconferencing/scss/_header.scss */
+.header__bgg {
+  position: absolute;
+  width: 100%; }
+
+/* line 19, videoconferencing/static/videoconferencing/scss/_header.scss */
+.gradient {
+  background-image: radial-gradient(to right bottom, rgba(17, 138, 178, 0.1) 0.9, rgba(14, 81, 103, 0.2) 0.9);
+  width: 100%;
+  height: calc(100vh - 80px);
+  min-height: 600px;
+  object-fit: cover;
+  position: relative;
+  z-index: 2; }

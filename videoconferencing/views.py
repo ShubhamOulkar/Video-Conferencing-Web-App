@@ -1,6 +1,16 @@
 from django.shortcuts import render
 
 
+# home page function view
+def home(request):
+    return render(request, 'videoconferencing/home.html')
+
+
+
+
+
+
+# WEBRTC function view
 def index(request):
     return render(request, 'videoconferencing/index.html')
 
