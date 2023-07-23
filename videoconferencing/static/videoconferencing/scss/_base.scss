@@ -1,7 +1,3 @@
-$font-display: 'Josefin Sans', sans-serif;
-$color-grey-dark-2: #6D5D4B;
-
-
 *,
 *::before,
 *::after{
@@ -17,7 +13,7 @@ html{
 
 body{
     font-family: $font-primary;
-    color: $color-grey-dark-2;
+    color: $color-secondary;
     font-weight: 300;
     line-height: 1.6;
     background-color: $color-grey-light-1;
@@ -27,5 +23,14 @@ body{
     background-color: aliceblue;
 
     display: grid;
-    grid-template-rows: 90vh repeat(3, minmax(30rem, min-content)) 1fr;
+    // grid-template-columns: [right-start] 1fr [right-end container-start] 70vw [container-end left-start] 1fr [left-end];
+    grid-template-rows: 100vh repeat(3, minmax(30rem, min-content)) max-content;
+
+    @media only screen and (max-width:$bp-large){
+        grid-template-rows: 90vh repeat(3, minmax(30rem, min-content)) max-content;
+    }
+
+    @media only screen and (max-width:$bp-medium){
+        grid-template-rows: 80vh repeat(3, minmax(30rem, min-content)) max-content;
+    }
 }

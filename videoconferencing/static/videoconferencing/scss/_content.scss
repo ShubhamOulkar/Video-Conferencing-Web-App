@@ -1,5 +1,66 @@
 .content{
     background-color: $color-grey-light-1;
-    padding: 5rem;
-    font-size: 4rem;
+    // grid-column: container-start / container-end;
+    padding: 5rem 20rem;
+    font-size: 2rem;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, minmax(20rem, mix-content));
+    gap: 8rem;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+
+    &__img{
+        width: 100%;
+        border-radius: 2rem;
+    }
+
+    &__details{
+        padding: 5rem;
+        padding-top: 2rem;
+    }
+
+    &__p{
+        text-align: justify;
+    }
+
+    // 1200px
+    @media only screen and (max-width:$bp-largest){
+        gap: 5rem;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+    // 1000px
+    @media only screen and (max-width:$bp-large){
+        gap: 2rem;
+    }
+    // 900px
+    @media only screen and (max-width:$bp-large-s){
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(6, minmax(15rem, max-content));
+        gap: 1rem;
+
+        &__img{
+            width: 100%;
+            border-radius: 2rem;
+            scale: 0.8;
+        }
+
+        &__details{
+            padding: 1rem;
+            padding-top: 0rem;
+        }
+    }
+    // 800px
+    @media only screen and (max-width:$bp-medium){
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        &__img{
+            width: 100%;
+            border-radius: 2rem;
+        }
+    }
 }

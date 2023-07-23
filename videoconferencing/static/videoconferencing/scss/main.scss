@@ -16,6 +16,7 @@ $font-display: 'Josefin Sans', sans-serif;
 // break points
 $bp-largest: 75em; //1200px
 $bp-large: 62.5em; //1000px/16=62.5em
+$bp-large-s: 56.26em; //900/16 = 56.26em
 $bp-medium: 50em; //800px
 $bp-small: 37.5em ; //600px
 
@@ -26,5 +27,6 @@ $bp-small: 37.5em ; //600px
 @import './content';
 @import './getstarted';
 @import './queries';
-
+@import './fontheading';
+@import './button';
 
