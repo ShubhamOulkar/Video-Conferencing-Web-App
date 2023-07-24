@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 
-<div class="container">
+<div class="container" id="container">
 
     <!-- header -->
     <header class="header">
@@ -12,8 +12,9 @@
             <div class="button-container">
                 <button class="btn">Start Video Call</button>
                 <div class="button-container--sub">
-                    <button class="btn" id="sign-up" onclick="(location.href = "{% url 'let-me-in' %}" )">Sign Up</button>
-                    <button class="btn" id="login">Login</button>
+                    <button class="btn" onclick="signup()">Sign Up</button>
+                    <button class="btn" onclick="login()">Login</button>
+                    <!-- <a href="{% url 'signout' %}" class="brn">Signout</a> -->
                 </div>
             </div>
         </div>
@@ -62,7 +63,7 @@
             <img src="{% static 'videoconferencing/img/screen-sharing-1200.jpg' %}" alt="img 3" class="content__img">
         </picture>
 
-        <div class="content__details">
+        <div class="content__details content__details--shiftcontent">
             <h3 class="heading-2">Share Your Screen Like a Pro</h3>
             <p class="content__p">Showcase your ideas and presentations with our intuitive screen
                 sharing feature. Collaborate effectively and keep everyone on
@@ -96,15 +97,14 @@
 
     <!-- get start section -->
     <section class="getstarted">
-
         <h4 class="heading-3">Get Started</h4>
-        <p>Ready to revolutionize your video calling experience?
+        <p class="getstarted__p">Ready to revolutionize your video calling experience?
             Register today and embark on a communication journey
             that’s worlds away from ordinary.
         </p>
         <div class="getstarted__buttons">
-            <button class="btn">Sign Up</button>
-            <button class="btn">Login</button>
+            <button class="btn" onclick="signup()">Sign Up</button>
+            <button class="btn" onclick="login()">Login</button>
         </div>
     </section>
 
@@ -198,6 +198,46 @@
         </div>
     </footer>
 
+</div>
+
+
+<!-- login account form -->
+<div id="login" class="login">
+    <div class="login__background"></div>
+    <div class="login__container">
+        <form action="{% url 'login' %}" class="login__form" method="post">
+            {% csrf_token %}
+            <input type="text" name="email" class="login__input" placeholder="Email/username" autofocus required>
+            <input type="password" name="password" class="login__input" placeholder="Input password" required>
+            <input type="submit" class="login__input btn" value="Login">
+        </form>
+        <div class="back_btn__container">
+            <div><a class="back_btn" onclick="home()">Back</a></div>
+            <div><a class="back_btn" onclick="forgetpassword()">Forget Password</a></div>
+            <div><a class="back_btn" onclick="signup()">Signup</a></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- new user signup form -->
+<div id="signup" class="signup">
+    <div class="signup__background"></div>
+    <div class="signup__container">
+        <form action="{% url 'signup' %}" class="signup__form" method="post">
+            {% csrf_token %}
+            <input type="text" name="name" class="signup__input" placeholder="Your name" autofocus required>
+            <input type="email" name="email" class="signup__input" placeholder="Email address" required>
+            <input type="password" name="password" class="signup__input" placeholder="Input password" required>
+            <input type="password" name="conformpassword" class="signup__input" placeholder="conform password" required>
+            <input type="submit" class="signup__input btn" value="signup">
+        </form>
+        <div class="back_btn__container">
+            <div><a class="back_btn" onclick="home()">Back</a></div>
+            <div><a class="back_btn" onclick="forgetpassword()">Forget Password</a></div>
+            <div><a class="back_btn" onclick="login()">Login</a></div>
+        </div>
+    </div>
 </div>
 
 {% endblock content %}

@@ -11,7 +11,8 @@
     justify-items: center;
     row-gap: 3rem;
 
-    p{
+    &__p{
+        font-size: 3rem;
         padding-left: 10rem;
         padding-right: 10rem;
     }

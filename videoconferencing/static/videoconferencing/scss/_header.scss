@@ -4,7 +4,7 @@
 
     &__content{
         position: absolute;
-        top: 35%;
+        top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 10;
@@ -52,6 +52,7 @@
         @media only screen and (max-width:$bp-small){
             margin-left: 0.4rem;
             margin-top: 0.4rem;
+            align-self: self-end;
         }
     }
 

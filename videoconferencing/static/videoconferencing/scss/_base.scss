@@ -34,3 +34,8 @@ body{
         grid-template-rows: 80vh repeat(3, minmax(30rem, min-content)) max-content;
     }
 }
+
+#signup,
+#login{
+    display: none;
+}

@@ -89,6 +89,9 @@ DATABASES = {
     }
 }
 
+# AUTH_USER_MODEL = 'YourAppName.YourClassName'
+AUTH_USER_MODEL = 'videoconferencing.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
