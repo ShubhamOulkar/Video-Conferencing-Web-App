@@ -6,7 +6,8 @@ def home(request):
     return render(request, 'videoconferencing/home.html')
 
 
-
+def signup(request):
+    return render(request, 'videoconferencing/signup.html')
 
 
 
