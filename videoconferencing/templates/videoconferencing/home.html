@@ -19,12 +19,19 @@
             </div>
             <h1 class="heading-1">Connect with RTC</h1>
             <div class="button-container">
-                <button class="btn">Start Video Call</button>
+                {% if user.is_authenticated %}
+                <div class="button-container--sub">
+                    <button class="btn">Start Video Call</button>
+                    <button class="btn" onclick="location.href={% url 'signout' %}">Logout</a>
+                </div>
+                {% endif %}
+                {% if not user.is_authenticated %}
                 <div class="button-container--sub">
                     <button class="btn" onclick="signup()">Sign Up</button>
                     <button class="btn" onclick="login()">Login</button>
                     <!-- <a href="{% url 'signout' %}" class="brn">Signout</a> -->
                 </div>
+                {% endif %}
             </div>
         </div>
 
@@ -111,10 +118,18 @@
             Register today and embark on a communication journey
             that’s worlds away from ordinary.
         </p>
+        {% if user.is_authenticated %}
+        <div class="getstarted__buttons">
+            <button class="btn">Start Video Call</button>
+            <button class="btn" onclick="location.href={% url 'signout' %}">Logout</a>
+        </div>
+        {% endif %}
+        {% if not user.is_authenticated %}
         <div class="getstarted__buttons">
             <button class="btn" onclick="signup()">Sign Up</button>
             <button class="btn" onclick="login()">Login</button>
         </div>
+        {% endif %}
     </section>
 
     <!-- common queries section -->
@@ -222,7 +237,7 @@
         </form>
         <div class="back_btn__container">
             <div><a class="back_btn" onclick="home()">Back</a></div>
-            <div><a class="back_btn" onclick="forgetpassword()">Forget Password</a></div>
+            <div><a class="back_btn" onclick="location.href={% url 'forgotpassword' %}">Forget Password</a></div>
             <div><a class="back_btn" onclick="signup()">Signup</a></div>
         </div>
     </div>
@@ -235,7 +250,7 @@
     <div class="signup__container">
         <form action="{% url 'signup' %}" class="signup__form" method="post">
             {% csrf_token %}
-            <input type="text" name="name" class="signup__input" placeholder="Your name" autofocus required>
+            <input type="text" name="name" class="signup__input" placeholder="Your name" required>
             <input type="email" name="email" class="signup__input" placeholder="Email address" required>
             <input type="password" name="password" id="password" class="signup__input" placeholder="Input password"
                 required>
@@ -249,7 +264,7 @@
         </form>
         <div class="back_btn__container">
             <div><a class="back_btn" onclick="home()">Back</a></div>
-            <div><a class="back_btn" onclick="forgetpassword()">Forget Password</a></div>
+            <div><a class="back_btn" onclick="location.href={% url 'forgotpassword' %}">Forget Password</a></div>
             <div><a class="back_btn" onclick="login()">Login</a></div>
         </div>
     </div>
