@@ -4,14 +4,14 @@
 
     &__content{
         position: absolute;
-        top: 30%;
+        top: 35%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 10;
 
         display: grid;
         grid-template-columns: 95vw;
-        grid-template-rows: 1fr 30rem 1fr;
+        grid-template-rows: 1fr 5rem 25rem 1fr;
         align-items: center;
         justify-items: center;
         align-content: center;
@@ -19,7 +19,6 @@
 
         @media only screen and (max-width:$bp-medium){
             grid-template-columns: 80vw;
-            grid-template-rows: 1fr 30rem 1fr;
         }
 
         @media only screen and (max-width:$bp-small){
@@ -94,4 +93,9 @@
             row-gap: 3rem;
         }
     }
+}
+
+#error-massage{
+    font-size: 1.5rem;
+    color: rgba(250, 207, 207, 0.984);
 }

@@ -7,20 +7,20 @@
 
 .heading-4{
     font-family:$font-display ;
-    font-size:2.5rem ;
+    font-size:2rem ;
     font-weight:600 ;
 }
 
 .heading-3{
     font-family:$font-display ;
-    font-size:3.5rem ;
+    font-size:2.5rem ;
     font-weight:600 ;
     text-transform: uppercase;
 }
 
 .heading-2{
     font-family:$font-display ;
-    font-size: 4rem;
+    font-size: 3rem;
     font-weight:700 ;
     padding-bottom: 2rem;
 
@@ -31,7 +31,7 @@
 
 .heading-1{
     font-family:$font-display ;
-    font-size: 7rem;
+    font-size: 5rem;
     font-weight:700 ;
     color: $color-grey-light-1;
     opacity: 0.4;
@@ -44,7 +44,7 @@
 
 
     @media only screen and (max-width:$bp-medium){
-        font-size: 5rem;
+        font-size: 4rem;
     }
 
     @media only screen and (max-width:$bp-small){

@@ -8,6 +8,15 @@
     <header class="header">
         <div class="header__content">
             <img src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
+            <div id="error-massage">
+                {% if messages %}
+                <ul class="text-danger">
+                    {% for message in messages %}
+                    <p {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</p>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
             <h1 class="heading-1">Connect with RTC</h1>
             <div class="button-container">
                 <button class="btn">Start Video Call</button>
@@ -228,8 +237,14 @@
             {% csrf_token %}
             <input type="text" name="name" class="signup__input" placeholder="Your name" autofocus required>
             <input type="email" name="email" class="signup__input" placeholder="Email address" required>
-            <input type="password" name="password" class="signup__input" placeholder="Input password" required>
-            <input type="password" name="conformpassword" class="signup__input" placeholder="conform password" required>
+            <input type="password" name="password" id="password" class="signup__input" placeholder="Input password"
+                required>
+            <label for="confirmation" id="correct-password-label"><i class="fa-solid fa-check"></i> Password
+                matched</label>
+            <label for="confirmation" id="incorrect-password-label"><i class="fa-solid fa-xmark"></i> Password must
+                match.</label>
+            <input type="password" name="conformpassword" id="conformpassword" class="signup__input"
+                placeholder="conform password" oninput="check_password()" required>
             <input type="submit" class="signup__input btn" value="signup">
         </form>
         <div class="back_btn__container">

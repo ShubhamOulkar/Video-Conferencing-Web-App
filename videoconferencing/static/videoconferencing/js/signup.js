@@ -21,3 +21,17 @@ const home = ()=>{
     document.querySelector('#signup').style.display = 'none';
     document.querySelector('#login').style.display = 'none';
 };
+
+
+const check_password = async ()=>{
+    password = await document.querySelector('#password').value;
+    confirmation = await document.querySelector('#conformpassword').value;
+
+   if (password === confirmation){
+       document.querySelector('#correct-password-label').style.display = 'block';
+       document.querySelector('#incorrect-password-label').style.display = 'none';
+   }else{
+       document.querySelector('#incorrect-password-label').style.display = 'block';
+       document.querySelector('#correct-password-label').style.display = 'none';
+   }
+}

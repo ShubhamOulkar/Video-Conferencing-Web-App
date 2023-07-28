@@ -36,19 +36,19 @@
     }
 
     &__p{
-        font-size: 3.5rem;
+        font-size: 2.2rem;
         text-align: justify;
 
         @media only screen and (max-width:$bp-largest){
-            font-size: 3rem;
+            font-size: 2rem;
         }
 
         @media only screen and (max-width:$bp-medium){
-            font-size: 2.75rem;
+            font-size: 1.8rem;
         }
 
         @media only screen and (max-width:$bp-small){
-            font-size: 2rem;
+            font-size: 1.3rem;
         }
     }
 
