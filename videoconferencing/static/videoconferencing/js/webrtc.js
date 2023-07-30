@@ -14,7 +14,7 @@ const channel_name = document.querySelector('#channel-name').innerHTML;
 
 const getLocalMedia = async ()=>{
 
-    await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
+    await navigator.mediaDevices.getUserMedia({'audio':false, 'video':true})
     .then(localMedia => {
         store.setLocalStrem(localMedia);
         const localUser = document.querySelector('#localuser');
@@ -32,7 +32,7 @@ const getLocalMedia = async ()=>{
         console.log('screenActive:', screenActive);
     });
 
-    signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/channel_room/' + channel_name + '/')
+    signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
 
     signaling_connection.onopen = ()=>{
         signaling_connection.send(JSON.stringify({'type':'ready'}));

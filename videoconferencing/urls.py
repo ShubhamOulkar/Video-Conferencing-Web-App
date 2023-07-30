@@ -10,6 +10,6 @@ urlpatterns = [
     path('send_email/',views.send_email, name='send_email'),
     path('verify_code/',views.verify_code, name='verify_code'), # type: ignore
     path('reset_password/', views.reset_password, name='reset_password'), 
-    path('room/', views.index, name='room' ),
-    # path('channel_room/<str:channel_name>/', views.channel_room, name='channel_room' ),
+    path('videocall/', views.channel, name='channel' ),
+    path('videocall/<str:channel_name>/', views.videocall, name='videocall' ),
 ]

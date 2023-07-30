@@ -21,8 +21,8 @@
             <div class="button-container">
                 {% if user.is_authenticated %}
                 <div class="button-container--sub">
-                    <button class="btn">Start Video Call</button>
-                    <button class="btn" onclick="location.href={% url 'signout' %}">Logout</a>
+                    <button class="btn" onclick="location.href={% url 'channel' %}">Start Video Call</button>
+                    <button class="btn" onclick="location.href={% url 'signout' %}">Logout</button>
                 </div>
                 {% endif %}
                 {% if not user.is_authenticated %}
@@ -120,7 +120,7 @@
         </p>
         {% if user.is_authenticated %}
         <div class="getstarted__buttons">
-            <button class="btn">Start Video Call</button>
+            <button class="btn" onclick="location.href={% url 'channel' %}">Start Video Call</button>
             <button class="btn" onclick="location.href={% url 'signout' %}">Logout</a>
         </div>
         {% endif %}

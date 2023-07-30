@@ -9,5 +9,10 @@ channel_name.onkeyup = function (e){
 
 
 join_btn.onclick = function (e){
-    window.location.pathname = '/channel_room/' + channel_name.value + '/' ;
+    if (channel_name.value == ''){
+        window.location.pathname = '/videocall/'
+        alert('please input channel name')
+    }else{
+        window.location.pathname = '/videocall/' + channel_name.value + '/' ;
+    }
 }

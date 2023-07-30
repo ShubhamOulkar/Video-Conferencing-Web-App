@@ -33,9 +33,6 @@ def signup(request):
             messages.error(request, 'Password must match')
             return render(request, "videoconferencing/home.html")
         
-        # print({'name':username, "email":email, 'password': password})
-
-            # Attempt to create new user
         try:
             user = User.objects.create_user(username, email, password)  # type: ignore
             user.save()
@@ -44,7 +41,7 @@ def signup(request):
             return render(request, "videoconferencing/home.html")
 
         login(request, user)
-        return HttpResponseRedirect(reverse("room"))
+        return HttpResponseRedirect(reverse("channel"))
     else:
         return HttpResponseRedirect(reverse("home"))
 
@@ -88,7 +85,7 @@ def user_login(request):
             # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("room"))
+            return HttpResponseRedirect(reverse("channel"))
         else:
             return HttpResponseRedirect(reverse("home"))
 
@@ -125,8 +122,8 @@ def send_email(request):
                 send_mail(subject, ''.join(map(str,code)), from_email, [to_email])
             except BadHeaderError:
                 return HttpResponse("Invalid header found.")
-            message = "verification code is send to following email." 
-            return JsonResponse({'message':message, 'email':to_email}, safe=False)      
+            message = f"verification code is send to an email {email}." 
+            return JsonResponse({'message':message}, safe=False)      
     return render(request, 'webvc/forgetpassword.html')
         
 
@@ -136,10 +133,10 @@ def verify_code(request):
         code0 = json.loads(request.body)
         
         if code0['code'] == ''.join(map(str,code)):
-            message = "verification is done! now set your password for following email."
+            message = f"verification is done! now set your password for an email {code0['email']}."
             status = True
         else:
-            message = "verification failed! for following email."
+            message = f"verification failed! for an email {code0['email']}."
             status = False
             return JsonResponse({'message':message,'email':code0['email'], 'status':status}, safe=False)
         return JsonResponse({'message':message,'email':code0['email']}, safe=False) 
@@ -153,13 +150,17 @@ def reset_password(request):
         user = User.objects.get(email=data['email'])
         user.set_password(password)
         user.save()
-    return JsonResponse({'message':'Password Saved, try login for following email'}, safe=False)
+    return JsonResponse({'message':'Password Saved, try to login.'}, safe=False)
 
 
 # WEBRTC function view
-def index(request):
-    return render(request, 'videoconferencing/index.html')
+@login_required(login_url="/")
+def channel(request):
+    username = request.user.username
+    return render(request, 'videoconferencing/channel.html', {'username':username})
 
 
-def channel_room(request, channel_name):
-    return render(request, 'videoconferencing/channel_room.html',{'channel_name':channel_name})
+@login_required(login_url="/")
+def videocall(request, channel_name):
+    username = request.user.username
+    return render(request, 'videoconferencing/videocall.html',{'channel_name':channel_name, 'username':username})

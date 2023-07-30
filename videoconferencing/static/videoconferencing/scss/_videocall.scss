@@ -1,0 +1,34 @@
+.videocal{
+    display: grid;
+    grid-template-columns:[right-start]1fr[right-end middle-start] 98vw [middle-end left-start] 1fr [left-end];
+    grid-template-rows:[name-start]5vh[name-end remote-start] 50vh [remote-end local-start] 35vh [local-end control-start]8vh[control-end];
+
+    &-channel{
+        grid-column: middle-start / middle-end;
+        grid-row: name-start / name-end;
+        background-color: aquamarine;
+    }
+
+    &-local{
+        grid-column: middle-start / middle-end;
+        grid-row: local-start / control-end;
+
+        &_video{
+            width: 20%;
+            border-radius: 100%;
+        }
+
+        &_username{
+        }
+    }
+    &-remote{
+        grid-column: middle-start / middle-end;
+        grid-row: remote-start / contol-end;
+        
+    }
+    &-controls{
+        grid-column: middle-start / middle-end;
+        grid-row: control-start / control-end;
+    }
+}
+
