@@ -1,4 +1,5 @@
 import * as store from './store_stream.js';
+import { updateScreenSharingButton } from './videocall_controls.js';
 
 let userconnection;
 let signaling_connection;
@@ -14,7 +15,10 @@ const channel_name = document.querySelector('#channel-name').innerHTML;
 
 const getLocalMedia = async ()=>{
 
-    await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
+    await navigator.mediaDevices.getUserMedia({'audio': true, 
+                                               'video': true,
+                                            })
+
     .then(localMedia => {
         store.setLocalStrem(localMedia);
         const localUser = document.querySelector('#localuser');
@@ -65,9 +69,9 @@ const createUserConnection = ()=>{
 
     // add receiving tracks from remote user
     const remoteMedia = new MediaStream();
-    const remoteUser = document.querySelector('#remoteuser');
-    remoteUser.srcObject = remoteMedia;
     store.setRemoteStream(remoteMedia);
+    const remoteUser = document.querySelector('#remoteuser');
+    remoteUser.srcObject = store.getState().remoteStream;
     userconnection.ontrack = (event)=>{
         remoteMedia.addTrack(event.track);
         console.log('remote tracks added to RTC connection:',remoteMedia);
@@ -80,6 +84,7 @@ const createUserConnection = ()=>{
         console.log('local tracks added to RTC connection:',localMedia.getVideoTracks()[0]);
     });  
 };
+
 
 const handleMessage = (event)=>{
     const data = JSON.parse(event.data);
@@ -167,54 +172,54 @@ const addCandidate = async (candidate)=>{
     }
 };
 
+
 let screenSharingStream;
 
-const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
+export const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
     if(screenSharingActive){
-
         const localStream = store.getState().localStream;
+        let localUser = store.getState().localUser;
+        const senders = localUser.getSenders();
+        const sender = senders.find((sender)=>
+            sender.track.kind === localStream.getVideoTracks()[0].kind );
+            if(sender){
+                sender.replaceTrack(localStream.getVideoTracks()[0]);
+            };
 
         // stop screen sharing
         store
         .getState()
-        .localStream
+        .screenSharingStream
         .getTracks()
         .forEach((track)=>{
             track.stop();
         });
 
-        await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
-        .then(localMedia => {
-            store.setLocalStrem(localMedia);
-            const localUser = document.querySelector('#localuser');
-            localUser.srcObject = localMedia;
-            console.log('local media devices got connected:',localMedia)
-            const localVideo = document.querySelector('#localuser');
-            localVideo.srcObject = localMedia;
-        }).catch(err => {
-            console.log('accessing local media devices error: ', err);
-        });
-
-        const localuser = store.getState().localUser;
-        localuser.addEventListener('negotiationneeded', sendUserOffer());
-
+        const localVideo = document.querySelector('#localuser');
+        localVideo.srcObject = localStream;
         store.setScreenSharingActive(!screenSharingActive);
 
+        updateScreenSharingButton(!screenSharingActive);
     }else {
         console.log('switching to screen sharing');
         try {
-            screenSharingStream = await navigator.mediaDevices.getDisplayMedia({'audio':true, 'video':true});
-            store.setLocalStrem(screenSharingStream);
-            console.log(screenSharingStream.getVideoTracks()[0])
-            
-            const localuser = store.getState().localUser;
-            localuser.addEventListener('negotiationneeded', sendUserOffer());
-
-
-            const localUser = document.querySelector('#localuser');
-            localUser.srcObject = screenSharingStream;
-            console.log('screenSharingActive:',screenSharingActive)
+            screenSharingStream = await navigator.mediaDevices.getDisplayMedia({'audio':false, 'video':true});
+            store.setScreenSharingStream(screenSharingStream);
+            console.log('screen sharing media:',screenSharingStream.getVideoTracks()[0])
+            let localUser = store.getState().localUser;
+            const senders = localUser.getSenders();
+            console.log('senders:',senders);
+            const sender = senders.find((sender)=>
+            sender.track.kind === screenSharingStream.getVideoTracks()[0].kind );
+            console.log('sender:',sender);
+            if(sender){
+                sender.replaceTrack(screenSharingStream.getVideoTracks()[0]);
+                console.log('replaced video:',sender)
+            };
+            const localVideo = document.querySelector('#localuser');
+            localVideo.srcObject = screenSharingStream;
             store.setScreenSharingActive(!screenSharingActive);
+            updateScreenSharingButton(!screenSharingActive);
         }catch (error) {
             console.log('error in screen sharing:',error)
         }

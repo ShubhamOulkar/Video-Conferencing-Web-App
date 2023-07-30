@@ -1,6 +1,7 @@
 let streams = {
     localStream : null,
     remoteStream : null,
+    screenSharingStream: null,
     remoteUser: null,
     localUser: null,
     screenSharingActive : false,
