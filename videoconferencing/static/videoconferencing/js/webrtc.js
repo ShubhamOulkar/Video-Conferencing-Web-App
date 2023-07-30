@@ -14,7 +14,7 @@ const channel_name = document.querySelector('#channel-name').innerHTML;
 
 const getLocalMedia = async ()=>{
 
-    await navigator.mediaDevices.getUserMedia({'audio':false, 'video':true})
+    await navigator.mediaDevices.getUserMedia({'audio':true, 'video':true})
     .then(localMedia => {
         store.setLocalStrem(localMedia);
         const localUser = document.querySelector('#localuser');
