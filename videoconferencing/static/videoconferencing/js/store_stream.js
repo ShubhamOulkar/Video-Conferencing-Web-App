@@ -5,8 +5,16 @@ let streams = {
     remoteUser: null,
     localUser: null,
     screenSharingActive : false,
+    remoteUsername:null,
 };
 
+
+export const setRemoteUsername = (username) => {
+    streams = {
+        ...streams,
+        remoteUsername: username,
+    };
+};
 
 export const setLocalStrem = (stream) => {
     streams = {

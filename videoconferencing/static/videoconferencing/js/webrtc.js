@@ -12,6 +12,7 @@ const server = {
 }
 
 const channel_name = document.querySelector('#channel-name').innerHTML;
+const localUsername = document.querySelector('#username').innerHTML;
 
 const getLocalMedia = async ()=>{
 
@@ -95,6 +96,7 @@ const handleMessage = (event)=>{
             if(uid === data.message.uid){
                 return;
             }else{
+                document.getElementById('remote-username').innerHTML = data.message.username;
                 sendUserAnswer(data.message.offer);
             };
             break;
@@ -115,6 +117,12 @@ const handleMessage = (event)=>{
         case 'ready':
             sendUserOffer();
             break;
+        case 'hangup':
+            if(uid === data.message.uid){
+                return;
+            }else{
+                closeRemoteVideo();
+            };
         default:
             return;
     }
@@ -132,6 +140,7 @@ const sendUserOffer = async()=>{
 
     signaling_connection.send(JSON.stringify({
         'uid' : uid,
+        'username':localUsername,
         'type':'offer',
         'offer':offer,
     }));
@@ -143,7 +152,7 @@ const sendUserAnswer = async (offer)=>{
     store.setRemoteUser(userconnection);
 
     let remoteuser = store.getState().remoteUser;
-
+    
     await remoteuser.setRemoteDescription(offer);
 
     const answer = await remoteuser.createAnswer();
@@ -225,5 +234,38 @@ export const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>
         }
     }
 };
+
+
+// leave video call and local stream
+
+let hangupButton = document.querySelector('#hangup_button');
+hangupButton.addEventListener('click', () => {
+
+    userconnection.close();
+
+    const localStream = store.getState().localStream;
+    localStream.getTracks().forEach(function (track) {
+        track.stop();
+    });
+
+    signaling_connection.send(JSON.stringify({
+        'uid' : uid,
+        'type':'hangup',
+    }));
+
+    console.log('send request to peer for hangup')
+
+    window.open('/videocall/', '_self');
+
+})
+
+const closeRemoteVideo = () => {
+    const remoteUser = document.querySelector('#remoteuser');
+    remoteUser.style.display = 'none';
+    const videocalremote_gif = document.querySelector('.videocal-remote_gif');
+    videocalremote_gif.style.display = 'block';
+    document.getElementById('channel-name').style.display = 'none';
+    document.querySelector('.videocal-controls').style.opacity = 1;
+}
 
 getLocalMedia();

@@ -1,4 +1,5 @@
 import * as store from './store_stream.js';
+
 // event listeners for camera on - off
 const cameraOnImage = "/static/videoconferencing/img/camera.png"
 const cameraOffImage = "/static/videoconferencing/img/cameraOff.png"
@@ -34,28 +35,6 @@ const updateMicButton = (micActive) => {
     micButtonImage.src = micActive ? micOffImage : micOnImage;
     micButton.style.background = micActive ? 'rgb(240, 61, 61)' : '#04070aea';
 };
-
-// leave video call and local stream
-
-let hangupButton = document.querySelector('#hangup_button');
-hangupButton.addEventListener('click', () => {
-    const localStream = store.getState().localStream;
-    localStream.getTracks().forEach(function (track) {
-        track.stop();
-    });
-
-    let localUser = store.getState().localUser;
-    const senders = localUser.getSenders();
-    const sender = senders.find((sender) =>
-        sender.track.kind === localStream.getVideoTracks()[0].kind);
-    console.log('sender:', sender);
-    if (sender) {
-        sender.replaceTrack(localStream.getVideoTracks()[0]);
-        console.log('replaced video:', sender)
-    };
-
-    window.open('/videocall/', '_self');
-})
 
 
 // update screen sharing button
