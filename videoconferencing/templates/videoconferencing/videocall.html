@@ -5,39 +5,35 @@
 <div class="videocal">
     <div class="videocal-channel">
         <img class="channel-logo videocal-channel_logo" src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
-        <label class="videocal-channel_name">Channel Name: <span id="channel-name" >{{channel_name}}</span></label>
+        <label class="videocal-channel_name">Channel Name: <span id="channel-name">{{channel_name}}</span></label>
     </div>
 
     <div class="videocal-remote">
         <label id="remote-username"></label>
-        <img class="videocal-remote_gif" src="{% static 'videoconferencing/img/disconnected.gif' %}" alt="User Disconnected">
+        <img class="videocal-remote_gif" src="{% static 'videoconferencing/img/disconnected.gif' %}"
+            alt="User Disconnected">
         <video id="remoteuser" class="videocal-remote_video" autoplay playsinline></video>
     </div>
 
     <div class="videocal-local">
         <div>
-            <div class="localname">
-                <label for="localuser" class="videocal-local_username" id="username">{{username}}</label>
-            </div>
-            <div class="localvideo">
-                <video id="localuser" class="videocal-local_video" autoplay playsinline></video>
-            </div>
+            <label for="localuser" class="videocal-local_username" id="username">{{username}}</label>
+            <video id="localuser" class="videocal-local_video" autoplay playsinline></video>
         </div>
-        <div>
-            <div class="videocal-controls">
-                <button type="button" id="camera_button" class="control-img">
-                    <img id="camera_button_image" src="{% static 'videoconferencing/img/camera.png' %}"  alt="camera">
-                </button>
-                <button type="button" class="control-img" id="mic_button">
-                    <img id="mic_button_image" src="{% static 'videoconferencing/img/mic.png' %}" alt="mic">
-                </button>
-                <button class="control-img" id="hangup_button">
-                    <img src="{% static 'videoconferencing/img/hangUp.png' %}" alt="">
-                </button>
-                <button type="button" id="screen_sharing_button" class="control-img">
-                    <img src="{% static 'videoconferencing/img/switchCameraScreenSharing.png' %}" alt="screen">
-                </button>
-            </div>
+
+        <div class="videocal-controls">
+            <button type="button" id="camera_button" class="control-img">
+                <img id="camera_button_image" src="{% static 'videoconferencing/img/camera.png' %}" alt="camera">
+            </button>
+            <button type="button" class="control-img" id="mic_button">
+                <img id="mic_button_image" src="{% static 'videoconferencing/img/mic.png' %}" alt="mic">
+            </button>
+            <button class="control-img" id="hangup_button">
+                <img src="{% static 'videoconferencing/img/hangUp.png' %}" alt="">
+            </button>
+            <button type="button" id="screen_sharing_button" class="control-img">
+                <img src="{% static 'videoconferencing/img/switchCameraScreenSharing.png' %}" alt="screen">
+            </button>
         </div>
     </div>
 

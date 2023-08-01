@@ -3,10 +3,12 @@
 {% block content %}
 
 <div class="channel">
-    <div>
-        <h1>login user: {{ username }}</h1>
-        <button class="btn" onclick="location.href={% url 'signout' %}">Logout</button>
-    </div>
+    <nav class="navigation-bar">
+        <a class="navigation-link">username: {{ username }}</a>
+        <a class="navigation-link" href="{% url 'home' %}">home</a>
+        <a class="navigation-link" href="{% url 'signout' %}">logout</a>
+    </nav>
+
     <div class="channel-container">
         <h1 class="heading-2">Create Channel</h1>
         <img class="channel-logo" src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
