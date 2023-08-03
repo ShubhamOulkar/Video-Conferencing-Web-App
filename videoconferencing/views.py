@@ -34,7 +34,7 @@ def signup(request):
             return render(request, "videoconferencing/home.html")
         
         try:
-            user = User.objects.create_user(username, email, password)  # type: ignore
+            user = User.objects.create_user(username.lower(), email, password)  # type: ignore
             user.save()
         except IntegrityError:
             messages.error(request, 'Username / Email Already taken.')

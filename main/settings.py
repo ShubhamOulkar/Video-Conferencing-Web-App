@@ -80,10 +80,12 @@ ASGI_APPLICATION = "main.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -166,5 +168,6 @@ EMAIL_HOST_PASSWORD  = 'ndsnszqzokwhgdhy'
 # import dj_database_url
 
 # DATABASES = {
-#     'default': dj_database_url.parse(env('DATABASE_URL'))
+#     'default': dj_database_url.parse('postgres://shubhu:1iNmFbeXqLU1xRpSFVQY4wopp6BE8EUt@dpg-chpdtgu7avjb90ip4q5g-a.singapore-postgres.render.com/heavyblogs_0qt4')
 # }
+
