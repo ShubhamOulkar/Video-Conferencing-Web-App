@@ -37,7 +37,7 @@ const getLocalMedia = async ()=>{
         console.log('screenActive:', screenActive);
     });
 
-    signaling_connection = new  WebSocket('wss://' + window.location.host + '/ws/videocall/' + channel_name + '/')
+    signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
 
     signaling_connection.onopen = ()=>{
         signaling_connection.send(JSON.stringify({'type':'ready'}));
@@ -241,6 +241,10 @@ export const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>
 let hangupButton = document.querySelector('#hangup_button');
 hangupButton.addEventListener('click', () => {
 
+    console.log('send request to peer for hangup')
+
+    window.open('/videocall/', '_self');
+
     userconnection.close();
 
     const localStream = store.getState().localStream;
@@ -252,11 +256,6 @@ hangupButton.addEventListener('click', () => {
         'uid' : uid,
         'type':'hangup',
     }));
-
-    console.log('send request to peer for hangup')
-
-    window.open('/videocall/', '_self');
-
 })
 
 const closeRemoteVideo = () => {
