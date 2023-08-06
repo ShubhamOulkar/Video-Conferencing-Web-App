@@ -3,6 +3,7 @@
 {% block content %}
 
 <div class="videocal">
+    
     <div class="videocal-channel">
         <img class="channel-logo videocal-channel_logo" src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
         <label class="videocal-channel_name">Channel Name: <span id="channel-name">{{channel_name}}</span></label>
@@ -17,8 +18,8 @@
 
     <div class="videocal-local">
         <div>
-            <label for="localuser" class="videocal-local_username" id="username">{{username}}</label>
-            <video id="localuser" class="videocal-local_video" autoplay playsinline></video>
+            <label  class="videocal-local_username" id="username">{{username}}</label>
+            <video id="localuser" class="videocal-local_video" autoplay playsinline muted></video>
         </div>
 
         <div class="videocal-controls">

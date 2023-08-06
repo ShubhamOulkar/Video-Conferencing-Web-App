@@ -3,7 +3,7 @@ import { updateScreenSharingButton } from './videocall_controls.js';
 
 let userconnection;
 let signaling_connection;
-let uid =  Math.floor((Math.random() * 1000));
+let uid = Math.floor((Math.random() * 1000));
 
 const server = {
     iceServer: [{
@@ -14,103 +14,129 @@ const server = {
 const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
 
-const getLocalMedia = async ()=>{
+const codecPreferences = document.getElementById('codecPreferences');
+const supportsSetCodecPreferences = window.RTCRtpTransceiver &&
+    'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
+console.log('supportsSetCodecPreferences', supportsSetCodecPreferences);
 
-    await navigator.mediaDevices.getUserMedia({'audio': true, 
-                                               'video': true,
-                                            })
+const getLocalMedia = async () => {
 
-    .then(localMedia => {
-        store.setLocalStrem(localMedia);
-        const localUser = document.querySelector('#localuser');
-        localUser.srcObject = localMedia;
-        console.log('local media devices got connected:',localMedia)
-    }).catch(err => {
-        console.log('accessing local media devices error: ', err);
-    });
+    await navigator.mediaDevices.getUserMedia({
+        'audio': { echoCancellation: true },
+        'video': true,
+    })
+
+        .then(localMedia => {
+            store.setLocalStrem(localMedia);
+            const localUser = document.querySelector('#localuser');
+            localUser.srcObject = localMedia;
+            console.log('local media devices got connected:', localMedia)
+        }).catch(err => {
+            console.log('accessing local media devices error: ', err);
+        });
 
     const screenSharingButton = document.getElementById('screen_sharing_button');
-    
-    screenSharingButton.addEventListener('click', async ()=>{
+
+    screenSharingButton.addEventListener('click', async () => {
         const screenActive = store.getState().screenSharingActive;
         switchBetweenCameraAndScreenSharing(screenActive);
         console.log('screenActive:', screenActive);
     });
 
-    signaling_connection = new  WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
 
-    signaling_connection.onopen = ()=>{
-        signaling_connection.send(JSON.stringify({'type':'ready'}));
+    signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
+
+    signaling_connection.addEventListener('error', (event) => {
+        alert('websocket connection error:', event)
+        window.open('/videocall/', '_self');
+    });
+
+    signaling_connection.onopen = () => {
+        console.log('websocket connection established');
+        signaling_connection.send(JSON.stringify({ 'type': 'ready' }));
     };
-    
+
     signaling_connection.addEventListener('message', handleMessage);
 };
 
 
-const createUserConnection = ()=>{
+const createUserConnection = () => {
     userconnection = new RTCPeerConnection(server);
     console.log('RTC userconnection established.');
 
-    userconnection.onicecandidate = (event)=>{
-        if(event.candidate){
-            // send ice candidate
-            signaling_connection.send(JSON.stringify({
-                'uid':uid,
-                'type':'candidate',
-                'candidate':event.candidate,
-            }));
-        };
-    };
-
-    userconnection.onconnectionstatechange = (event)=>{
-        if(userconnection.connectionState === 'connected'){
-            console.log('succesfully connected to remote user.')
-        };
-    };
 
     // add receiving tracks from remote user
     const remoteMedia = new MediaStream();
     store.setRemoteStream(remoteMedia);
     const remoteUser = document.querySelector('#remoteuser');
     remoteUser.srcObject = store.getState().remoteStream;
-    userconnection.ontrack = (event)=>{
+    userconnection.ontrack = (event) => {
         remoteMedia.addTrack(event.track);
-        console.log('remote tracks added to RTC connection:',remoteMedia);
+        console.log('remote tracks added to RTC connection:', remoteMedia);
     };
-    
+
     // add local media
     const localMedia = store.getState().localStream;
     localMedia.getTracks().forEach((track) => {
         userconnection.addTrack(track, localMedia);
-        console.log('local tracks added to RTC connection:',localMedia.getVideoTracks()[0]);
-    });  
+        console.log('local tracks added to RTC connection:', localMedia.getVideoTracks()[0]);
+    });
+
+    userconnection.onicecandidate = (event) => {
+        if (event.candidate) {
+            // send ice candidate
+            signaling_connection.send(JSON.stringify({
+                'uid': uid,
+                'type': 'candidate',
+                'candidate': event.candidate,
+            }));
+        };
+    };
+
+    userconnection.onconnectionstatechange = (event) => {
+        if (userconnection.connectionState === 'connected') {
+            console.log('succesfully connected to remote user.')
+            remoteUser.style.display = 'block';
+            const videocalremote_gif = document.querySelector('.videocal-remote_gif');
+            videocalremote_gif.style.display = 'none';
+        } else {
+            console.log('remote user disconnected.')
+            remoteUser.style.display = 'none';
+            const videocalremote_gif = document.querySelector('.videocal-remote_gif');
+            videocalremote_gif.style.display = 'block';
+        };
+    };
+
+    // const transceiver = userconnection.getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
+    // transceiver.setCodecPreferences(codecs);
 };
 
 
-const handleMessage = (event)=>{
-    const data = JSON.parse(event.data);
-    console.log('received message from server:',data.message);
 
-    switch (data.message.type){
+const handleMessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log('received message from server:', data.message);
+
+    switch (data.message.type) {
         case 'offer':
-            if(uid === data.message.uid){
+            if (uid === data.message.uid) {
                 return;
-            }else{
+            } else {
                 document.getElementById('remote-username').innerHTML = data.message.username;
                 sendUserAnswer(data.message.offer);
             };
             break;
         case 'answer':
-            if(uid === data.message.uid){
+            if (uid === data.message.uid) {
                 return;
-            }else{
+            } else {
                 addAnswer(data.message.answer);
             };
             break;
         case 'candidate':
-            if(uid === data.message.uid){
+            if (uid === data.message.uid) {
                 return;
-            }else{
+            } else {
                 addCandidate(data.message.candidate);
             };
             break;
@@ -118,9 +144,9 @@ const handleMessage = (event)=>{
             sendUserOffer();
             break;
         case 'hangup':
-            if(uid === data.message.uid){
+            if (uid === data.message.uid) {
                 return;
-            }else{
+            } else {
                 closeRemoteVideo();
             };
         default:
@@ -128,7 +154,7 @@ const handleMessage = (event)=>{
     }
 };
 
-const sendUserOffer = async()=>{
+const sendUserOffer = async () => {
     createUserConnection();
 
     store.setLocalUser(userconnection);
@@ -139,98 +165,98 @@ const sendUserOffer = async()=>{
     await localuser.setLocalDescription(offer);
 
     signaling_connection.send(JSON.stringify({
-        'uid' : uid,
-        'username':localUsername,
-        'type':'offer',
-        'offer':offer,
+        'uid': uid,
+        'username': localUsername,
+        'type': 'offer',
+        'offer': offer,
     }));
 };
 
-const sendUserAnswer = async (offer)=>{
+const sendUserAnswer = async (offer) => {
     createUserConnection();
 
     store.setRemoteUser(userconnection);
 
     let remoteuser = store.getState().remoteUser;
-    
+
     await remoteuser.setRemoteDescription(offer);
 
     const answer = await remoteuser.createAnswer();
-   
+
     await remoteuser.setLocalDescription(answer);
 
     signaling_connection.send(JSON.stringify({
-        'uid':uid,
-        'type' : 'answer',
-        'answer' : answer,
+        'uid': uid,
+        'type': 'answer',
+        'answer': answer,
     }));
 };
 
-const addAnswer = (answer)=>{
+const addAnswer = (answer) => {
     let localuser = store.getState().localUser;
     localuser.setRemoteDescription(answer);
     console.log('webrtc answer came:', answer)
 };
 
-const addCandidate = async (candidate)=>{
-    console.log('icecandidate:',candidate);
-    try{
+const addCandidate = async (candidate) => {
+    console.log('icecandidate:', candidate);
+    try {
         await userconnection.addIceCandidate(candidate);
-    }catch (error) {
-        console.log('error occured while ice candidate:',error);
+    } catch (error) {
+        console.log('error occured while ice candidate:', error);
     }
 };
 
 
 let screenSharingStream;
 
-export const switchBetweenCameraAndScreenSharing = async (screenSharingActive)=>{
-    if(screenSharingActive){
+export const switchBetweenCameraAndScreenSharing = async (screenSharingActive) => {
+    if (screenSharingActive) {
         const localStream = store.getState().localStream;
         let localUser = store.getState().localUser;
         const senders = localUser.getSenders();
-        const sender = senders.find((sender)=>
-            sender.track.kind === localStream.getVideoTracks()[0].kind );
-            if(sender){
-                sender.replaceTrack(localStream.getVideoTracks()[0]);
-            };
+        const sender = senders.find((sender) =>
+            sender.track.kind === localStream.getVideoTracks()[0].kind);
+        if (sender) {
+            sender.replaceTrack(localStream.getVideoTracks()[0]);
+        };
 
         // stop screen sharing
         store
-        .getState()
-        .screenSharingStream
-        .getTracks()
-        .forEach((track)=>{
-            track.stop();
-        });
+            .getState()
+            .screenSharingStream
+            .getTracks()
+            .forEach((track) => {
+                track.stop();
+            });
 
         const localVideo = document.querySelector('#localuser');
         localVideo.srcObject = localStream;
         store.setScreenSharingActive(!screenSharingActive);
 
         updateScreenSharingButton(!screenSharingActive);
-    }else {
+    } else {
         console.log('switching to screen sharing');
         try {
-            screenSharingStream = await navigator.mediaDevices.getDisplayMedia({'audio':false, 'video':true});
+            screenSharingStream = await navigator.mediaDevices.getDisplayMedia({ 'audio': false, 'video': true });
             store.setScreenSharingStream(screenSharingStream);
-            console.log('screen sharing media:',screenSharingStream.getVideoTracks()[0])
+            console.log('screen sharing media:', screenSharingStream.getVideoTracks()[0])
             let localUser = store.getState().localUser;
             const senders = localUser.getSenders();
-            console.log('senders:',senders);
-            const sender = senders.find((sender)=>
-            sender.track.kind === screenSharingStream.getVideoTracks()[0].kind );
-            console.log('sender:',sender);
-            if(sender){
+            console.log('senders:', senders);
+            const sender = senders.find((sender) =>
+                sender.track.kind === screenSharingStream.getVideoTracks()[0].kind);
+            console.log('sender:', sender);
+            if (sender) {
                 sender.replaceTrack(screenSharingStream.getVideoTracks()[0]);
-                console.log('replaced video:',sender)
+                console.log('replaced video:', sender)
             };
             const localVideo = document.querySelector('#localuser');
             localVideo.srcObject = screenSharingStream;
             store.setScreenSharingActive(!screenSharingActive);
             updateScreenSharingButton(!screenSharingActive);
-        }catch (error) {
-            console.log('error in screen sharing:',error)
+        } catch (error) {
+            console.log('error in screen sharing:', error)
         }
     }
 };
@@ -243,8 +269,6 @@ hangupButton.addEventListener('click', () => {
 
     console.log('send request to peer for hangup')
 
-    window.open('/videocall/', '_self');
-
     userconnection.close();
 
     const localStream = store.getState().localStream;
@@ -253,9 +277,11 @@ hangupButton.addEventListener('click', () => {
     });
 
     signaling_connection.send(JSON.stringify({
-        'uid' : uid,
-        'type':'hangup',
+        'uid': uid,
+        'type': 'hangup',
     }));
+
+    window.open('/videocall/', '_self');
 })
 
 const closeRemoteVideo = () => {
@@ -267,4 +293,7 @@ const closeRemoteVideo = () => {
     document.querySelector('.videocal-controls').style.opacity = 1;
 }
 
+
+
 getLocalMedia();
+
