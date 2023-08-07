@@ -14,15 +14,10 @@ const server = {
 const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
 
-const codecPreferences = document.getElementById('codecPreferences');
-const supportsSetCodecPreferences = window.RTCRtpTransceiver &&
-    'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
-console.log('supportsSetCodecPreferences', supportsSetCodecPreferences);
-
 const getLocalMedia = async () => {
 
     await navigator.mediaDevices.getUserMedia({
-        'audio': { echoCancellation: true },
+        'audio': true,
         'video': true,
     })
 
@@ -106,9 +101,6 @@ const createUserConnection = () => {
             videocalremote_gif.style.display = 'block';
         };
     };
-
-    // const transceiver = userconnection.getTransceivers().find(t => t.sender && t.sender.track === localStream.getVideoTracks()[0]);
-    // transceiver.setCodecPreferences(codecs);
 };
 
 
@@ -121,7 +113,6 @@ const handleMessage = (event) => {
             if (uid === data.message.uid) {
                 return;
             } else {
-                document.getElementById('remote-username').innerHTML = data.message.username;
                 sendUserAnswer(data.message.offer);
             };
             break;
@@ -201,6 +192,7 @@ const addCandidate = async (candidate) => {
     console.log('icecandidate:', candidate);
     try {
         await userconnection.addIceCandidate(candidate);
+
     } catch (error) {
         console.log('error occured while ice candidate:', error);
     }
