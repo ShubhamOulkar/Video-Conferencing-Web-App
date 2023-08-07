@@ -115,7 +115,6 @@ const createUserConnection = () => {
 
 const handleMessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log('received message from server:', data.message);
 
     switch (data.message.type) {
         case 'offer':
