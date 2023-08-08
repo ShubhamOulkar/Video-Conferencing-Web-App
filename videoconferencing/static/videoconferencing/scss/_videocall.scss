@@ -5,16 +5,23 @@
 
     @media only screen and (max-width: $bp-medium) {
         grid-template-rows: [name-start]5vh[name-end remote-start] 45vh [remote-end local-start] 50vh [local-end];
-        row-gap: 5rem;
+        row-gap: 2rem;
     }
 
     &-channel {
         grid-column: middle-start / middle-end;
-        grid-row: name-start / name-end;
+        grid-row: name-start / remote-start;
         margin: 4rem;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+
+        @media only screen and (max-width: $bp-medium) {
+            flex-direction: row;
+            margin: 0;
+            justify-content: center;
+            gap: 3rem;
+        }
 
         &_name {
             color: #000;
@@ -25,6 +32,7 @@
             padding: 0.1rem 0.4rem;
             border-radius: 0.5rem;
             box-shadow: 0 1rem 3rem rgba(#000, 0.5);
+            margin: 1rem;
         }
 
         &_logo {
@@ -87,6 +95,11 @@
         grid-column: right-start / left-end;
         grid-row: name-start / local-end;
 
+        @media only screen and (max-width: $bp-medium) {
+            grid-column: middle-start / middle-end;
+            grid-row: remote-start / remote-end;
+        }
+
         &_video {
             height: 100vh;
             width: 100vw;
@@ -98,7 +111,7 @@
             }
 
             @media only screen and (max-width: $bp-medium) {
-                height: 50vh;
+                height: 45vh;
                 width: 100vw;
             }
         }
