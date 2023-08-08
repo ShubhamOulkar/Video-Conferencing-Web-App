@@ -18,11 +18,12 @@
         justify-content: center;
 
         @media only screen and (max-width:$bp-medium){
+            top: 45%;
             grid-template-columns: 80vw;
         }
 
         @media only screen and (max-width:$bp-small){
-            grid-template-rows: 1fr 25rem 1fr;
+            grid-template-rows: 1fr 5rem 10rem 1fr;
         }
     }
 
