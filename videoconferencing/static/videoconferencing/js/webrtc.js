@@ -4,10 +4,36 @@ import { updateScreenSharingButton } from './videocall_controls.js';
 let userconnection;
 let signaling_connection;
 let uid = Math.floor((Math.random() * 1000));
+var startTime;
 
 const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
 
+// check internet connection
+const showStatus = document.getElementById('status');
+
+const isOnline = window.navigator.onLine;
+// true or false
+
+if (isOnline) {
+    showStatus.innerText = 'online';
+    showStatus.style.color='green';
+};
+
+window.addEventListener('offline', (e) => {
+    // User is offline
+    showStatus.innerText = 'offline';
+    showStatus.style.color='red';
+});
+
+window.addEventListener('online', (e) => {
+    // User is offline
+    showStatus.innerText = 'online';
+    showStatus.style.color='green';
+});
+
+
+// check device
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 console.log('isMobile device: ', isMobile);
 
@@ -64,6 +90,7 @@ const getLocalMedia = async () => {
         window.open('/videocall/', '_self');
     });
 
+
     signaling_connection.onopen = () => {
         console.log('websocket connection established');
         signaling_connection.send(JSON.stringify({ 'type': 'ready' }));
@@ -76,7 +103,8 @@ const getLocalMedia = async () => {
 const createUserConnection = () => {
     userconnection = new RTCPeerConnection(server);
     console.log('RTC userconnection established.');
-
+    
+    startTime = window.performance.now();
 
     // add receiving tracks from remote user
     const remoteMedia = new MediaStream();
@@ -109,6 +137,11 @@ const createUserConnection = () => {
     userconnection.onconnectionstatechange = (event) => {
         if (userconnection.connectionState === 'connected') {
             console.log('succesfully connected to remote user.')
+
+            const elapsedTime = window.performance.now() - startTime;
+            console.log('Setup time: ' + elapsedTime.toFixed(3) + 'ms');
+            startTime = null;
+
             remoteUser.style.display = 'block';
             const videocalremote_gif = document.querySelector('.videocal-remote_gif');
             videocalremote_gif.style.display = 'none';
