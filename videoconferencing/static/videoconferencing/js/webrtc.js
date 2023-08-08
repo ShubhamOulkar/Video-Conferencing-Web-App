@@ -5,14 +5,26 @@ let userconnection;
 let signaling_connection;
 let uid = Math.floor((Math.random() * 1000));
 
+const channel_name = document.querySelector('#channel-name').innerHTML;
+const localUsername = document.querySelector('#username').innerHTML;
+
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+console.log('isMobile device: ', isMobile);
+
 const server = {
     iceServer: [{
         urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
     }]
-}
+};
 
-const channel_name = document.querySelector('#channel-name').innerHTML;
-const localUsername = document.querySelector('#username').innerHTML;
+
+if (isMobile) {
+    const screenSharingButton = document.getElementById('screen_sharing_button');
+    screenSharingButton.style.display = 'none';
+    const cameraSwitchButton = document.getElementById('camera_switch_button');
+    cameraSwitchButton.style.display = 'block';
+};
+
 
 const getLocalMedia = async () => {
 
@@ -20,7 +32,6 @@ const getLocalMedia = async () => {
         'audio': true,
         'video': true,
     })
-
         .then(localMedia => {
             store.setLocalStrem(localMedia);
             const localUser = document.querySelector('#localuser');
@@ -38,6 +49,13 @@ const getLocalMedia = async () => {
         console.log('screenActive:', screenActive);
     });
 
+    const changeCameraButton = document.getElementById('camera_switch_button');
+
+    changeCameraButton.addEventListener('click', async () => {
+        const cameraActive = store.getState().cameraActive;
+        switchCamera(cameraActive);
+        console.log('cameraActive:', cameraActive);
+    });
 
     signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
 
@@ -113,6 +131,7 @@ const handleMessage = (event) => {
             if (uid === data.message.uid) {
                 return;
             } else {
+                document.getElementById('remote-username').innerHTML = data.message.username;
                 sendUserAnswer(data.message.offer);
             };
             break;
@@ -198,10 +217,10 @@ const addCandidate = async (candidate) => {
     }
 };
 
-
+// screen sharing on desktops
 let screenSharingStream;
 
-export const switchBetweenCameraAndScreenSharing = async (screenSharingActive) => {
+const switchBetweenCameraAndScreenSharing = async (screenSharingActive) => {
     if (screenSharingActive) {
         const localStream = store.getState().localStream;
         let localUser = store.getState().localUser;
@@ -252,6 +271,68 @@ export const switchBetweenCameraAndScreenSharing = async (screenSharingActive) =
     }
 };
 
+// switch camera on mobile devices
+let backCameraStream;
+let frontCameraStream;
+const switchCamera = async (cameraActive) => {
+    if (cameraActive) {
+        // stop back camera sharing
+        store
+            .getState()
+            .backCameraStream
+            .getTracks()
+            .forEach((track) => {
+                track.stop();
+            });
+
+        frontCameraStream = await navigator.mediaDevices.getUserMedia({ 'audio': true, 'video': { facingMode: 'user' } });
+        store.setLocalStrem(frontCameraStream);
+        let localUser = store.getState().localUser;
+        const senders = localUser.getSenders();
+        const sender = senders.find((sender) =>
+            sender.track.kind === frontCameraStream.getVideoTracks()[0].kind);
+        if (sender) {
+            sender.replaceTrack(frontCameraStream.getVideoTracks()[0]);
+        };
+
+        const localVideo = document.querySelector('#localuser');
+        localVideo.srcObject = frontCameraStream;
+        store.setCameraActive(!cameraActive);
+        updateMobileCameraButton(!cameraActive);
+    } else {
+        console.log('switching camera');
+        try {
+            // stop back camera sharing
+            store
+                .getState()
+                .localStream
+                .getTracks()
+                .forEach((track) => {
+                    track.stop();
+                });
+
+            backCameraStream = await navigator.mediaDevices.getUserMedia({ 'audio': true, 'video': { facingMode: 'environment' } });
+            store.setBackCameraStream(backCameraStream);
+            let localUser = store.getState().localUser;
+            const senders = localUser.getSenders();
+            console.log('senders:', senders);
+            const sender = senders.find((sender) =>
+                sender.track.kind === backCameraStream.getVideoTracks()[0].kind);
+            console.log('sender:', sender);
+            if (sender) {
+                sender.replaceTrack(backCameraStream.getVideoTracks()[0]);
+                console.log('replaced video:', sender)
+            };
+            const localVideo = document.querySelector('#localuser');
+            localVideo.srcObject = backCameraStream;
+            store.setCameraActive(!cameraActive);
+            updateMobileCameraButton(!cameraActive); //this button hase same styling as screen sharing, this function just change color to red button.
+        } catch (error) {
+            console.log('error camera switching:', error)
+        }
+    }
+};
+
 
 // leave video call and local stream
 
@@ -283,8 +364,6 @@ const closeRemoteVideo = () => {
     document.getElementById('channel-name').style.display = 'none';
     document.querySelector('.videocal-controls').style.opacity = 1;
 }
-
-
 
 getLocalMedia();
 

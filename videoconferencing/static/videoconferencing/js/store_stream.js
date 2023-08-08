@@ -6,8 +6,24 @@ let streams = {
     localUser: null,
     screenSharingActive : false,
     remoteUsername:null,
+    cameraActive: false,
+    backCameraStream:null,
 };
 
+
+export const setBackCameraStream = (stream)=>{
+    streams = {
+        ...streams,
+        backCameraStream: stream,
+    };
+}
+
+export const setCameraActive = (condition)=>{
+    streams = {
+        ...streams,
+        cameraActive: condition,
+    };
+}
 
 export const setRemoteUsername = (username) => {
     streams = {

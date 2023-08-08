@@ -41,5 +41,11 @@ const updateMicButton = (micActive) => {
 export const updateScreenSharingButton = (screenActive) => {
     const screenButtonImage = document.getElementById('screen_sharing_button');
     screenButtonImage.style.background = screenActive ? 'rgb(240, 61, 61)' : '#04070aea';
-}
+};
 
+// update camera buttons
+
+export const updateMobileCameraButton = (screenActive) => {
+    const cameraButtonImage = document.getElementById('camera_switch_button');
+    cameraButtonImage.style.background = screenActive ? 'rgb(240, 61, 61)' : '#04070aea';
+}
