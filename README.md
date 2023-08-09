@@ -26,7 +26,7 @@ EMAIL_HOST_PASSWORD: {gmail app password}
 <!-- Adding external redis url will slow down our signalling process -->
 ```
 
-## If redis is available on machine then change following hosts address  and port. Default port is 6379.
+#### If redis is available on machine then change following hosts address  and port. Default port is 6379.
 ```
 CHANNEL_LAYERS = {
     "default": {
@@ -38,7 +38,7 @@ CHANNEL_LAYERS = {
 }
 ```
 
-## if you dont have above options then just use django channels in memory channel layer as follows.  This layer can be helpful in Testing or for local-development purposes:
+#### if you dont have above options then just use django-channels in memory channel_layer as follows.  This layer can be helpful in Testing or for local-development purposes:
 
 ```
 CHANNEL_LAYERS = {
@@ -48,7 +48,7 @@ CHANNEL_LAYERS = {
 }
 ```
 
-#### 6 - run following commands in terminal
+#### 6 - run following commands for migrations in terminal
 ```
 python manage.py makemigrations
 ```
