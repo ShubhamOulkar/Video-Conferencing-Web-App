@@ -146,6 +146,9 @@ const createUserConnection = () => {
             const videocalremote_gif = document.querySelector('.videocal-remote_gif');
             videocalremote_gif.style.display = 'none';
         } else if (userconnection.connectionState === 'connecting'){
+            // from pc to mobile browser iceccandidate state remains as connecting
+            // dont get confuse, connecting state comes fist , connected state is last 
+            // this code is added while debugging this issue 
             console.log('remote user connecting.')
         } else {
             console.log('remote user disconnected.')

@@ -26,7 +26,7 @@ environ.Env.read_env()
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY') #'django-insecure-8kb6@8_44_eqkx=)=vot@38#8@(og$=xn+qoo_rj)_z*#i7iw8'
+SECRET_KEY =  'django-insecure-8kb6@8_44_eqkx=)=vot@38#8@(og$=xn+qoo_rj)_z*#i7iw8' #env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True #False
@@ -83,7 +83,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [('127.0.0.1', 6379)], #dj_redis_url.parse(env('REDIS_URL'))
+            "hosts": [('127.0.0.1', 6379)], 
         },
     },
 }
@@ -103,7 +103,7 @@ DATABASES = {
 # }
 
 
-# AUTH_USER_MODEL = 'YourAppName.YourClassName'
+# add this for USER model from django, AUTH_USER_MODEL = 'YourAppName.YourClassName'
 AUTH_USER_MODEL = 'videoconferencing.User'
 
 
