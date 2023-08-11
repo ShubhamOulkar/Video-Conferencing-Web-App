@@ -1,10 +1,12 @@
 import * as store from './store_stream.js';
 import { updateScreenSharingButton } from './videocall_controls.js';
 
+
 let userconnection;
 let signaling_connection;
 let uid = Math.floor((Math.random() * 1000));
 var startTime;
+let twilioServers=[];
 
 const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
@@ -21,26 +23,38 @@ if (isOnline) {
 };
 
 window.addEventListener('offline', (e) => {
-    // User is offline
     showStatus.innerText = 'offline';
     showStatus.style.color='red';
 });
 
 window.addEventListener('online', (e) => {
-    // User is offline
     showStatus.innerText = 'online';
     showStatus.style.color='green';
 });
 
 
-// check device
+// check device type
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 console.log('isMobile device: ', isMobile);
 
-const server = {
-    iceServer: [{
-        urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-    }]
+// get server configurations from django
+let iceServers = async () => {
+    await fetch('/turn_server/', {
+        method: 'GET',
+    })
+    .then(response => response.json()
+    )
+    .then(ser => {
+        twilioServers = ser.servers
+        const server = {
+            iceServer: [...twilioServers, {urls:'stun:stun1.l.google.com:19302', url:'stun:stun2.l.google.com:19302'}]
+        }; 
+        console.log(server)
+        return server;
+    })
+    .catch( err => {
+        console.log('iceservers fetching error from twilio:', err)
+    });
 };
 
 
@@ -101,7 +115,7 @@ const getLocalMedia = async () => {
 
 
 const createUserConnection = () => {
-    userconnection = new RTCPeerConnection(server);
+    userconnection = new RTCPeerConnection(iceServers());
     console.log('RTC userconnection established.');
     
     startTime = window.performance.now();

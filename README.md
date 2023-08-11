@@ -75,6 +75,6 @@ python manage.py runserver
 ```
 
 
-![](/videoconferencing/static/videoconferencing/project%20demo%20video/p2p_webrtc.gif)
+# Readme file will be updated soon.
 
 
