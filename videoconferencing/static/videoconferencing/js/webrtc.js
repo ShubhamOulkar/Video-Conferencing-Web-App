@@ -57,7 +57,7 @@ let iceServers = async () => {
     });
 };
 
-
+// disable screen sharing on mobile devices and enable camera switch functionality
 if (isMobile) {
     const screenSharingButton = document.getElementById('screen_sharing_button');
     screenSharingButton.style.display = 'none';
