@@ -19,9 +19,12 @@ cd main
 ```
 ### 5 - open main folder and create .env file add following varibles
 ```
-REDIS_URL: {create redis stack acount https://app.redislabs.com/#/ and add free redis server url here}
-EMAIL_HOST_USER: {your email address}
-EMAIL_HOST_PASSWORD: {gmail app password}
+REDIS_URL={create redis stack acount https://app.redislabs.com/#/ and add free redis server url here}
+EMAIL_HOST_USER={your email address}
+EMAIL_HOST_PASSWORD={gmail app password}
+TWILIO_TOKRN={create twilio account and add token here, this is for TURN server}
+TWILIO_SID={create twilio account and add SID here, this is for TURN server}
+
 
 <!-- Adding external redis url will slow down our signalling process I dont recommend this only use when your hosting environment dont have internal redis server-->
 ```
