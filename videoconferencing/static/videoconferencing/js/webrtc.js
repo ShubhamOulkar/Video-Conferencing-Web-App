@@ -8,27 +8,19 @@ let uid = Math.floor((Math.random() * 1000));
 var startTime;
 let twilioServers = [];
 
-// const channel_name = document.querySelector('#channel-name').innerHTML;
+const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
 
-const channel_name = document.querySelector('#channel-name');
-const join_btn = document.querySelector('#join-btn');
 
-channel_name.onkeyup = function (e){
-    if(e.keyCode === 13 ){
-        join_btn.click();
-    }
-};
+window.addEventListener("load", function(){
+    setTimeout(
+        function open(event){
+            document.querySelector(".popup").style.display = "block";
+        },
+        1000
+    )
+});
 
-
-join_btn.onclick = function (e){
-    if (channel_name.value == ''){
-        window.location.pathname = '/videocall/'
-        alert('please input channel name')
-    }else{
-        window.location.pathname = '/videocall/' + channel_name.value + '/' ;
-    }
-};
 
 // check internet connection
 const showStatus = document.getElementById('status');
@@ -85,8 +77,9 @@ if (isMobile) {
     cameraSwitchButton.style.display = 'block';
 };
 
+
 // websocket 
-signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name.value + '/')
+signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
 
 signaling_connection.onopen = (e) => {
     console.log('websocket connection established.')
@@ -153,6 +146,7 @@ signaling_connection.onmessage = e => {
 //get local media devices
 const startLocalVideoButton = document.getElementById('videocall_button');
 startLocalVideoButton.addEventListener('click', async () => {
+    document.querySelector(".popup").style.display = "none";
     await navigator.mediaDevices.getUserMedia({
         'audio': true,
         'video': true,
@@ -171,7 +165,7 @@ startLocalVideoButton.addEventListener('click', async () => {
     signaling_connection.send(JSON.stringify({ 'type': 'ready', 'uid': uid }));
 });
 
-
+document.getElementById('video-call-end').addEventListener('click', ()=>{window.open('/videocall/', '_self')});
 
 const createUserConnection = () => {
     userconnection = new RTCPeerConnection(iceServers());
@@ -433,7 +427,9 @@ hangupButton.addEventListener('click', () => {
 
     console.log('send request to peer for hangup')
 
-    userconnection.close();
+    if(userconnection){
+        userconnection.close();
+    };
 
     const localStream = store.getState().localStream;
     localStream.getTracks().forEach(function (track) {

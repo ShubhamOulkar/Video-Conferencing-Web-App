@@ -2,23 +2,19 @@
 {% load static %}
 {% block content %}
 
-<div class="channel">
-    <nav class="navigation-bar">
-        <a class="navigation-link">username: {{ username }}</a>
-        <a class="navigation-link" href="{% url 'home' %}">home</a>
-        <a class="navigation-link" href="{% url 'signout' %}">logout</a>
-    </nav>
-
-    <div class="channel-container">
-        <h1 class="heading-2">Create Channel</h1>
-        <img class="channel-logo" src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
-        <input type="text" name="channel-name" id="channel-name" placeholder="Input channel name" class="channel-input"
-            autofocus required />
-        <input type="submit" id="join-btn" class="btn channel-btn" value="Start a Call" />
+<div class="popup">
+    <h2>Do you want to start video call ?</h2>
+    <div class="popup-buttons">
+        <button type="button" class="popup-controls" id="videocall_button" title="Start video call">
+            Yes
+        </button>
+        <button type="button" id="video-call-end" class="popup-controls" title="End video call">
+            No
+        </button>
     </div>
 </div>
 
-<div class="videocal" style="display: none;">
+<div class="videocal">
     
     <div class="videocal-channel">
         <img class="channel-logo videocal-channel_logo" src="{% static 'videoconferencing/img/icon.png' %}" alt="logo">
@@ -40,23 +36,20 @@
         </div>
 
         <div class="videocal-controls">
-            <button type="button" id="videocall_button" class="control-img">
-                <img id="videocall_button_image" src="{% static 'videoconferencing/img/video.png' %}" alt="video call">
-            </button>
-            <button type="button" id="camera_button" class="control-img">
+            <button type="button" id="camera_button" class="control-img" title="control camera">
                 <img id="camera_button_image" src="{% static 'videoconferencing/img/camera.png' %}" alt="camera">
             </button>
-            <button type="button" class="control-img" id="mic_button">
+            <button type="button" class="control-img" id="mic_button" title="control mic">
                 <img id="mic_button_image" src="{% static 'videoconferencing/img/mic.png' %}" alt="mic">
             </button>
-            <button class="control-img" id="hangup_button">
+            <button class="control-img" id="hangup_button" title="End video call">
                 <img src="{% static 'videoconferencing/img/hangUp.png' %}" alt="hangup">
             </button>
-            <button type="button" id="screen_sharing_button" class="control-img">
+            <button type="button" id="screen_sharing_button" class="control-img" title="share screen">
                 <img src="{% static 'videoconferencing/img/switchCameraScreenSharing.png' %}" alt="screen">
             </button>
-            <button type="button" id="camera_switch_button" class="control-img" style="display: none;">
-                <img src="{% static 'videoconferencing/img/switchCameraScreenSharing.png' %}" alt="screen">
+            <button type="button" id="camera_switch_button" class="control-img" style="display: none;" title="back camera">
+                <img src="{% static 'videoconferencing/img/switchCameraScreenSharing.png' %}" alt="switch camera">
             </button>
         </div>
     </div>

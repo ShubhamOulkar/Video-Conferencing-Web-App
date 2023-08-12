@@ -174,10 +174,10 @@ def reset_password(request):
 @login_required(login_url="/")
 def channel(request):
     username = request.user.username
-    return render(request, 'videoconferencing/videocall.html', {'username':username})
+    return render(request, 'videoconferencing/channel.html', {'username':username})
 
 
 @login_required(login_url="/")
-def videocall(request):
+def videocall(request, channel_name):
     username = request.user.username
-    return render(request, 'videoconferencing/videocall.html',{'username':username})
+    return render(request, 'videoconferencing/videocall.html',{ 'channel_name':channel_name,'username':username})
