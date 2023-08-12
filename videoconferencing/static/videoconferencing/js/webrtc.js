@@ -1,15 +1,34 @@
 import * as store from './store_stream.js';
-import { updateScreenSharingButton } from './videocall_controls.js';
+import { updateScreenSharingButton, updateVideoCallButton, updateMobileCameraButton } from './videocall_controls.js';
 
 
 let userconnection;
 let signaling_connection;
 let uid = Math.floor((Math.random() * 1000));
 var startTime;
-let twilioServers=[];
+let twilioServers = [];
 
-const channel_name = document.querySelector('#channel-name').innerHTML;
+// const channel_name = document.querySelector('#channel-name').innerHTML;
 const localUsername = document.querySelector('#username').innerHTML;
+
+const channel_name = document.querySelector('#channel-name');
+const join_btn = document.querySelector('#join-btn');
+
+channel_name.onkeyup = function (e){
+    if(e.keyCode === 13 ){
+        join_btn.click();
+    }
+};
+
+
+join_btn.onclick = function (e){
+    if (channel_name.value == ''){
+        window.location.pathname = '/videocall/'
+        alert('please input channel name')
+    }else{
+        window.location.pathname = '/videocall/' + channel_name.value + '/' ;
+    }
+};
 
 // check internet connection
 const showStatus = document.getElementById('status');
@@ -19,17 +38,17 @@ const isOnline = window.navigator.onLine;
 
 if (isOnline) {
     showStatus.innerText = 'online';
-    showStatus.style.color='green';
+    showStatus.style.color = 'green';
 };
 
 window.addEventListener('offline', (e) => {
     showStatus.innerText = 'offline';
-    showStatus.style.color='red';
+    showStatus.style.color = 'red';
 });
 
 window.addEventListener('online', (e) => {
     showStatus.innerText = 'online';
-    showStatus.style.color='green';
+    showStatus.style.color = 'green';
 });
 
 
@@ -42,19 +61,20 @@ let iceServers = async () => {
     await fetch('/turn_server/', {
         method: 'GET',
     })
-    .then(response => response.json()
-    )
-    .then(ser => {
-        twilioServers = ser.servers
-        const server = {
-            iceServer: [...twilioServers, {urls:'stun:stun1.l.google.com:19302', url:'stun:stun2.l.google.com:19302'}]
-        }; 
-        console.log(server)
-        return server;
-    })
-    .catch( err => {
-        console.log('iceservers fetching error from twilio:', err)
-    });
+        .then(response => response.json()
+        )
+        .then(ser => {
+            twilioServers = ser.servers
+            const server = {
+                iceServer: [...twilioServers, { urls: 'stun:stun.1und1.de:3478' }],
+                iceTransportPolicy: 'relay'
+            };
+            // console.log(server)
+            return server;
+        })
+        .catch(err => {
+            console.log('iceservers fetching error from twilio:', err)
+        });
 };
 
 // disable screen sharing on mobile devices and enable camera switch functionality
@@ -65,9 +85,74 @@ if (isMobile) {
     cameraSwitchButton.style.display = 'block';
 };
 
+// websocket 
+signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name.value + '/')
 
-const getLocalMedia = async () => {
+signaling_connection.onopen = (e) => {
+    console.log('websocket connection established.')
+};
 
+signaling_connection.addEventListener('error', (event) => {
+    alert('websocket connection error:', event)
+    window.open('/videocall/', '_self');
+});
+
+signaling_connection.onmessage = e => {
+    const data = JSON.parse(e.data);
+
+    if (!store.getState().localStream) {
+        console.log('not ready yet', store.getState().localStream);
+        return;
+    }
+
+    switch (data.message.type) {
+        case 'offer':
+            if (uid === data.message.uid) {
+                return;
+            } else {
+                document.getElementById('remote-username').innerHTML = data.message.username;
+                sendUserAnswer(data.message.offer);
+                console.log('offer came from :' + data.message.uid)
+            };
+            break;
+        case 'answer':
+            if (uid === data.message.uid) {
+                return;
+            } else {
+                addAnswer(data.message.answer);
+            };
+            break;
+        case 'candidate':
+            addCandidate(data.message.candidate);
+            break;
+        case 'ready':
+            // A second tab joined. This tab will initiate a call unless in a call already.
+            if (userconnection) {
+                console.log('already in call, ignoring');
+                return;
+            }
+            if (data['message']['uid'] == uid) {
+                console.log('dont make call to yourself.');
+                return;
+            } else {
+                sendUserOffer();
+                console.log('local offer send by user:', uid)
+            }
+            break;
+        case 'hangup':
+            if (uid === data.message.uid) {
+                return;
+            } else {
+                closeRemoteVideo();
+            };
+        default:
+            return;
+    }
+};
+
+//get local media devices
+const startLocalVideoButton = document.getElementById('videocall_button');
+startLocalVideoButton.addEventListener('click', async () => {
     await navigator.mediaDevices.getUserMedia({
         'audio': true,
         'video': true,
@@ -81,43 +166,17 @@ const getLocalMedia = async () => {
             console.log('accessing local media devices error: ', err);
         });
 
-    const screenSharingButton = document.getElementById('screen_sharing_button');
+    updateVideoCallButton();
 
-    screenSharingButton.addEventListener('click', async () => {
-        const screenActive = store.getState().screenSharingActive;
-        switchBetweenCameraAndScreenSharing(screenActive);
-        console.log('screenActive:', screenActive);
-    });
+    signaling_connection.send(JSON.stringify({ 'type': 'ready', 'uid': uid }));
+});
 
-    const changeCameraButton = document.getElementById('camera_switch_button');
-
-    changeCameraButton.addEventListener('click', async () => {
-        const cameraActive = store.getState().cameraActive;
-        switchCamera(cameraActive);
-        console.log('cameraActive:', cameraActive);
-    });
-
-    signaling_connection = new WebSocket('ws://' + window.location.host + '/ws/videocall/' + channel_name + '/')
-
-    signaling_connection.addEventListener('error', (event) => {
-        alert('websocket connection error:', event)
-        window.open('/videocall/', '_self');
-    });
-
-
-    signaling_connection.onopen = () => {
-        console.log('websocket connection established');
-        signaling_connection.send(JSON.stringify({ 'type': 'ready' }));
-    };
-
-    signaling_connection.addEventListener('message', handleMessage);
-};
 
 
 const createUserConnection = () => {
     userconnection = new RTCPeerConnection(iceServers());
     console.log('RTC userconnection established.');
-    
+
     startTime = window.performance.now();
 
     // add receiving tracks from remote user
@@ -159,7 +218,7 @@ const createUserConnection = () => {
             remoteUser.style.display = 'block';
             const videocalremote_gif = document.querySelector('.videocal-remote_gif');
             videocalremote_gif.style.display = 'none';
-        } else if (userconnection.connectionState === 'connecting'){
+        } else if (userconnection.connectionState === 'connecting') {
             // from pc to mobile browser iceccandidate state remains as connecting
             // dont get confuse, connecting state comes fist , connected state is last 
             // this code is added while debugging this issue 
@@ -174,47 +233,6 @@ const createUserConnection = () => {
 };
 
 
-
-const handleMessage = (event) => {
-    const data = JSON.parse(event.data);
-
-    switch (data.message.type) {
-        case 'offer':
-            if (uid === data.message.uid) {
-                return;
-            } else {
-                document.getElementById('remote-username').innerHTML = data.message.username;
-                sendUserAnswer(data.message.offer);
-            };
-            break;
-        case 'answer':
-            if (uid === data.message.uid) {
-                return;
-            } else {
-                addAnswer(data.message.answer);
-            };
-            break;
-        case 'candidate':
-            if (uid === data.message.uid) {
-                return;
-            } else {
-                addCandidate(data.message.candidate);
-            };
-            break;
-        case 'ready':
-            sendUserOffer();
-            break;
-        case 'hangup':
-            if (uid === data.message.uid) {
-                return;
-            } else {
-                closeRemoteVideo();
-            };
-        default:
-            return;
-    }
-};
-
 const sendUserOffer = async () => {
     createUserConnection();
 
@@ -224,7 +242,7 @@ const sendUserOffer = async () => {
 
     const offer = await localuser.createOffer();
     await localuser.setLocalDescription(offer);
-
+    console.log('localuser:', localuser)
     signaling_connection.send(JSON.stringify({
         'uid': uid,
         'username': localUsername,
@@ -269,13 +287,34 @@ const addCandidate = async (candidate) => {
     }
 };
 
+
+// event listeners for screen sharing
+const screenSharingButton = document.getElementById('screen_sharing_button');
+
+screenSharingButton.addEventListener('click', async () => {
+    const screenActive = store.getState().screenSharingActive;
+    switchBetweenCameraAndScreenSharing(screenActive);
+    console.log('screenActive:', screenActive);
+});
+
+
+// event listeners for camera switch on mobile devices
+const changeCameraButton = document.getElementById('camera_switch_button');
+
+changeCameraButton.addEventListener('click', async () => {
+    const cameraActive = store.getState().cameraActive;
+    switchCamera(cameraActive);
+    console.log('cameraActive:', cameraActive);
+});
+
+
 // screen sharing on desktops
 let screenSharingStream;
 
 const switchBetweenCameraAndScreenSharing = async (screenSharingActive) => {
     if (screenSharingActive) {
         const localStream = store.getState().localStream;
-        let localUser = store.getState().localUser;
+        let localUser = userconnection;
         const senders = localUser.getSenders();
         const sender = senders.find((sender) =>
             sender.track.kind === localStream.getVideoTracks()[0].kind);
@@ -303,7 +342,8 @@ const switchBetweenCameraAndScreenSharing = async (screenSharingActive) => {
             screenSharingStream = await navigator.mediaDevices.getDisplayMedia({ 'audio': false, 'video': true });
             store.setScreenSharingStream(screenSharingStream);
             console.log('screen sharing media:', screenSharingStream.getVideoTracks()[0])
-            let localUser = store.getState().localUser;
+            let localUser = userconnection;
+            console.log(localUser);
             const senders = localUser.getSenders();
             console.log('senders:', senders);
             const sender = senders.find((sender) =>
@@ -339,7 +379,7 @@ const switchCamera = async (cameraActive) => {
 
         frontCameraStream = await navigator.mediaDevices.getUserMedia({ 'audio': true, 'video': { facingMode: 'user' } });
         store.setLocalStrem(frontCameraStream);
-        let localUser = store.getState().localUser;
+        let localUser = userconnection;
         const senders = localUser.getSenders();
         const sender = senders.find((sender) =>
             sender.track.kind === frontCameraStream.getVideoTracks()[0].kind);
@@ -365,7 +405,7 @@ const switchCamera = async (cameraActive) => {
 
             backCameraStream = await navigator.mediaDevices.getUserMedia({ 'audio': true, 'video': { facingMode: 'environment' } });
             store.setBackCameraStream(backCameraStream);
-            let localUser = store.getState().localUser;
+            let localUser = userconnection;
             const senders = localUser.getSenders();
             console.log('senders:', senders);
             const sender = senders.find((sender) =>
@@ -417,5 +457,4 @@ const closeRemoteVideo = () => {
     document.querySelector('.videocal-controls').style.opacity = 1;
 }
 
-getLocalMedia();
 

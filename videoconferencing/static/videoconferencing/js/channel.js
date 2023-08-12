@@ -5,7 +5,7 @@ channel_name.onkeyup = function (e){
     if(e.keyCode === 13 ){
         join_btn.click();
     }
-}
+};
 
 
 join_btn.onclick = function (e){
@@ -15,4 +15,4 @@ join_btn.onclick = function (e){
     }else{
         window.location.pathname = '/videocall/' + channel_name.value + '/' ;
     }
-}
+};

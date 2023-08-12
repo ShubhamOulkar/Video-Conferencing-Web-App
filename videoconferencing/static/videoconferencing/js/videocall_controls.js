@@ -43,9 +43,16 @@ export const updateScreenSharingButton = (screenActive) => {
     screenButtonImage.style.background = screenActive ? 'rgb(240, 61, 61)' : '#04070aea';
 };
 
-// update camera buttons
+// update camera buttons on mobile devices
 
 export const updateMobileCameraButton = (screenActive) => {
     const cameraButtonImage = document.getElementById('camera_switch_button');
     cameraButtonImage.style.background = screenActive ? 'rgb(240, 61, 61)' : '#04070aea';
 }
+
+// update video call button 
+export const updateVideoCallButton = () => {
+    const videocall_button_image = document.getElementById('videocall_button');
+    videocall_button_image.style.background = 'rgb(240, 61, 61)';
+}
+
