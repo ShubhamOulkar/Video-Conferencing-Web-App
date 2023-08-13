@@ -409,7 +409,8 @@ const switchCamera = async (cameraActive) => {
             console.log('sender:', sender);
             if (sender) {
                 sender.replaceTrack(backCameraStream.getVideoTracks()[0]);
-                console.log('replaced video:', sender)
+                sender.replaceTrack(backCameraStream.getAudioTracks()[0]);
+                console.log('replaced video and audio:', sender)
             };
             const localVideo = document.querySelector('#localuser');
             localVideo.srcObject = backCameraStream;
