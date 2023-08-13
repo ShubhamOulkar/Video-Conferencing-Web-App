@@ -1,12 +1,12 @@
 .videocal {
     display: grid;
-    margin-top: 1.5rem;
     grid-template-columns: [right-start]1fr[right-end middle-start] 98vw [middle-end left-start] 1fr [left-end];
     grid-template-rows: [name-start]5vh[name-end remote-start] 60vh [remote-end local-start] 35vh [local-end];
 
     @media only screen and (max-width: $bp-medium) {
         grid-template-rows: [name-start]5vh[name-end remote-start] 45vh [remote-end local-start] 50vh [local-end];
         row-gap: 2rem;
+        margin-top: 1.5rem;
     }
 
     &-channel {
@@ -96,6 +96,7 @@
         grid-column: right-start / left-end;
         grid-row: name-start / local-end;
 
+
         @media only screen and (max-width: $bp-medium) {
             grid-column: middle-start / middle-end;
             grid-row: remote-start / remote-end;
@@ -108,12 +109,14 @@
 
             @media only screen and (max-width: $bp-large-s) {
                 height: 70vh;
-                width: 100vw;
+                width: 90vw;
             }
 
             @media only screen and (max-width: $bp-medium) {
                 height: 45vh;
-                width: 100vw;
+                width: 90vw;
+                margin: 0.5rem 0rem 0.5rem 1.5rem;
+                border-radius: 2rem;
             }
         }
 
