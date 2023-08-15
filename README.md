@@ -70,6 +70,7 @@ both personal and professional users.
 4. HTML, JavaScript, CSS, Bootstrap 
 5. Host server on [render](https://render.com/)
 
+<div id="Key-Features"/>
 
 ### Key Features:
 1. **Video Calling:** The application allows users to initiate video calls with other participants in real time. It leverages the Agora RTC SDK to establish reliable and high-quality video communication.
@@ -171,6 +172,7 @@ python manage.py runserver
 ```
 
 <div id="architecture"/>
+
 ![](report_folder/wireframe/Architecture.png)
 
 
