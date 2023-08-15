@@ -173,6 +173,11 @@ python manage.py runserver
 
 <div id="architecture"/>
 
+### Architecture
+
 ![](report_folder/wireframe/Architecture.png)
 
 
+### How WebRTC Works?
+
+![](report_folder/wireframe/send%20sdp.png)
