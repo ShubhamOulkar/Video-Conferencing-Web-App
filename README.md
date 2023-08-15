@@ -11,6 +11,12 @@
 - [Key Features](#Key)
 - [How to run application locally ?](#How)
 - [System Architecture](#architecture)
+- [How WebRTC works ?](#webrtc)
+- [Project Report](report_folder/detail_project_report.pdf)
+- [Wireframe](report_folder/wireframe.pdf)
+- [HLD](report_folder/HLD.pdf)
+- [LLD](report_folder/LLD.pdf)
+- [YouTube Video]()
 
 
 <div id="Live"/>
@@ -87,7 +93,7 @@ both personal and professional users.
 
 7. **Responsive Web Application:** The application is designed to be responsive, ensuring optimal user experience across a variety of devices and screen sizes. It automatically adapts its layout and functionality to provide a seamless video calling experience on desktops, laptops, tablets, and mobile devices.
 
-8. **Screen Sharing:**User can share any window with remote peer with audio.
+8. **Screen Sharing:** User can share any window with remote peer with audio.
 
 9. **Switch to back camera**:Mobile users can able to switch to back camera.
 
@@ -177,6 +183,8 @@ python manage.py runserver
 
 ![](report_folder/wireframe/Architecture.png)
 
+
+<div id="webrtc"/>
 
 ### How WebRTC Works?
 
