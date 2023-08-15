@@ -3,22 +3,22 @@
 ### Peer to Peer video calling connection with screen sharing 
 
 ## Table of Contents
-- [Project objective](#Project-overview)
-- [Complexity](#Distinctiveness-and-Complexity)
+- [Project objective](#Project)
+- [Complexity](#Distinctiveness)
 - [What’s contained in each file I created.](#What)
-- [LIVE DEMO](#Live-Demo-link)
+- [LIVE DEMO](#Live)
 - [Technology](#Technology)
-- [Key Features](#Key-Features)
-- [How to run application locally ?](#How-to-run-application-?)
+- [Key Features](#Key)
+- [How to run application locally ?](#How)
 - [System Architecture](#architecture)
 
 
-<div id="Live-Demo-link"/>
+<div id="Live"/>
 
 ### [Live Demo link](https://connect-rtc.onrender.com/)
 
 
-<div id="Project-overview"/>
+<div id="Project"/>
 
 ### Project Objective:
 Design an intuitive and user-centric video conferencing web application that provides seamless,
@@ -36,7 +36,7 @@ both personal and professional users.
         Responsive Web Page design
 
 
-<div id="Distinctiveness-and-Complexity"/>
+<div id="Distinctiveness"/>
 
 ### Complexity
  This projects is distinctive and complex due to the real-time nature of the communication, cross-platform compatibility considerations, network and firewall traversal challenges, security requirements, scalability concerns, and integration with existing systems. Successful implementation requires expertise in WebRTC standards, web development, network protocols, and security practices. The WebRTC Protocol is a collection of other technologies like signaling, connecting, securing, communicating. I will explain complexity in establishing bidirectional connection of audio/video channels between local and remote users.
@@ -70,7 +70,7 @@ both personal and professional users.
 4. HTML, JavaScript, CSS, Bootstrap 
 5. Host server on [render](https://render.com/)
 
-<div id="Key-Features"/>
+<div id="Key"/>
 
 ### Key Features:
 1. **Video Calling:** The application allows users to initiate video calls with other participants in real time. It leverages the Agora RTC SDK to establish reliable and high-quality video communication.
@@ -93,7 +93,7 @@ both personal and professional users.
 
 
 
-<div id="How-to-run-application-?"/>
+<div id="How"/>
 
 ### How to run application locally ?
 #### step 1 - Clone repo
