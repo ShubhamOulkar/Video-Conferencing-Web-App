@@ -12,6 +12,12 @@
 - [How to run application locally ?](#How-to-run-application-?)
 - [System Architecture](#architecture)
 
+
+<div id="Live-Demo-link"/>
+
+### [Live Demo link](https://connect-rtc.onrender.com/)
+
+
 <div id="Project-overview"/>
 
 ### Project Objective:
@@ -54,10 +60,6 @@ both personal and professional users.
 7. [videoconferencing/consumers.py](videoconferencing/consumers.py)this file is similar to views.py, which contains asynchronous functions for channel.  
 8. [videoconferencing/routing.py](videoconferencing/routing.py)this file route for websocket connection.
 
-
-<div id="Live-Demo-link"/>
-
-### [Live Demo link](https://connect-rtc.onrender.com/)
 
 <div id="Technology"/>
 
@@ -169,6 +171,6 @@ python manage.py runserver
 ```
 
 <div id="architecture"/>
-![](report_folder/wireframe%20png/Architecture.png)
+![](report_folder/wireframe/Architecture.png)
 
 
