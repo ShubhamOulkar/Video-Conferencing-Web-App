@@ -13,6 +13,10 @@ import environ
 import re
 import json
 from .models import *
+import logging
+
+logger = logging.getLogger('root')
+
 
 # varification code choice number from this list
 number_list = [0,1, 2, 3, 4, 5, 6, 7, 8, 9 ]
@@ -22,19 +26,22 @@ environ.Env.read_env()
 
 # TURN server credentials
 TWILIO_SID = env('TWILIO_SID')
-TWILIO_TOKRN = env('TWILIO_TOKRN')
-client = Client(TWILIO_SID, TWILIO_TOKRN)
+TWILIO_TOKEN = env('TWILIO_TOKRN')
+
+client = Client(TWILIO_SID, TWILIO_TOKEN)
 
 token = client.tokens.create()
 
 #send servers list to webrtc
 @login_required(login_url="/")
 def turn_server(request):
+    logger.info("Twilio servers succesfully accessed.")
     return JsonResponse({'servers':token.ice_servers}, safe=False)
 
 
 # home page function view
 def home(request):
+    logger.info('Home page successfully loaded.')
     return render(request, 'videoconferencing/home.html')
 
 
@@ -55,9 +62,11 @@ def signup(request):
             user.save()
         except IntegrityError:
             messages.error(request, 'Username / Email Already taken.')
+            logger.exception('Someone is trying to signup with already existing email address.')
             return render(request, "videoconferencing/home.html")
 
         login(request, user)
+        logger.info('New user sign up.')
         return HttpResponseRedirect(reverse("channel"))
     else:
         return HttpResponseRedirect(reverse("home"))
@@ -102,6 +111,7 @@ def user_login(request):
             # Check if authentication successful
         if user is not None:
             login(request, user)
+            logger.info('User login is succesful.')
             return HttpResponseRedirect(reverse("channel"))
         else:
             return HttpResponseRedirect(reverse("home"))
@@ -110,10 +120,12 @@ def user_login(request):
 
 def signout(request):
     logout(request)
+    logger.info('User logout succesful.')
     return HttpResponseRedirect(reverse("home"))
 
 
 def forgotpassword(request):
+    logger.info('User is trying to reset password.')
     return render(request, 'videoconferencing/forgotpassword.html')
 
 
@@ -131,13 +143,16 @@ def send_email(request):
         except User.DoesNotExist:
             to_email = False
             message = "Following email is not valid."
+            logger.exception("User Doesnot exist in our DB.")
             return JsonResponse({'message':message, 'email':email['email'], 'status':False}, safe=False)
             
         from_email = settings.EMAIL_HOST_USER
         if subject and code and to_email:
             try:
                 send_mail(subject, ''.join(map(str,code)), from_email, [to_email])
+                logger.info('Server send verification code to the user')
             except BadHeaderError:
+                logger.exception('email sending failed.')
                 return HttpResponse("Invalid header found.")
             message = f"verification code is send to an email {email}." 
             return JsonResponse({'message':message}, safe=False)      
@@ -152,9 +167,11 @@ def verify_code(request):
         if code0['code'] == ''.join(map(str,code)):
             message = f"verification is done! now set your password for an email {code0['email']}."
             status = True
+            logger.info('User verified successfully.')
         else:
             message = f"verification failed! for an email {code0['email']}."
             status = False
+            logger.warning("user failed to verify account.")
             return JsonResponse({'message':message,'email':code0['email'], 'status':status}, safe=False)
         return JsonResponse({'message':message,'email':code0['email']}, safe=False) 
 
@@ -167,6 +184,7 @@ def reset_password(request):
         user = User.objects.get(email=data['email'])
         user.set_password(password)
         user.save()
+        logger.info("user reset password succesfully.")
     return JsonResponse({'message':'Password Saved, try to login.'}, safe=False)
 
 
@@ -174,10 +192,12 @@ def reset_password(request):
 @login_required(login_url="/")
 def channel(request):
     username = request.user.username
+    logger.info('Create channel page rendered succesfully.')
     return render(request, 'videoconferencing/channel.html', {'username':username})
 
 
 @login_required(login_url="/")
 def videocall(request, channel_name):
     username = request.user.username
+    logger.info("Video call page rendered succesfully.")
     return render(request, 'videoconferencing/videocall.html',{ 'channel_name':channel_name,'username':username})
